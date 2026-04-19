@@ -1,7 +1,7 @@
 # External Shine
 
 <p align="center">
-  <img src="assets/images/app_logo.png" alt="External Shine Logo" width="220" />
+  <img src="assets/images/logo.svg" alt="External Shine Logo" width="220" />
 </p>
 
 External Shine is a skincare and beauty e-commerce mobile application built with **Flutter** and **Dart**. The app focuses on a clean shopping experience where users can explore skincare products, view product details, read reviews, and discover related items in a soft, modern interface.

@@ -46,9 +46,26 @@ class DemoProductDetail {
       ),
     ],
     colorOptions: [
-      ProductColorOption(label: 'Downy Rose', value: AppColors.primary),
-      ProductColorOption(label: 'Soft Apple', value: AppColors.secondary),
-      ProductColorOption(label: 'Bloom Fig', value: Color(0xFFF9C1C9)),
+      ProductColorOption(
+        label: 'Downy Rose',
+        value: AppColors.primary,
+        assetPath: 'assets/images/option1.png',
+      ),
+      ProductColorOption(
+        label: 'Soft Apple',
+        value: AppColors.secondary,
+        assetPath: 'assets/images/option2.png',
+      ),
+      ProductColorOption(
+        label: 'Bloom Fig',
+        value: Color(0xFFF9C1C9),
+        assetPath: 'assets/images/option3.png',
+      ),
+      ProductColorOption(
+        label: 'Rosy Milk',
+        value: Color(0xFFF5CDD8),
+        assetPath: 'assets/images/option4.png',
+      ),
     ],
     relatedProducts: [
       RelatedProduct(

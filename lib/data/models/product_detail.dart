@@ -4,10 +4,15 @@ import 'product_review.dart';
 import 'related_product.dart';
 
 class ProductColorOption {
-  const ProductColorOption({required this.label, required this.value});
+  const ProductColorOption({
+    required this.label,
+    required this.value,
+    required this.assetPath,
+  });
 
   final String label;
   final Color value;
+  final String assetPath;
 }
 
 class ProductGalleryImage {

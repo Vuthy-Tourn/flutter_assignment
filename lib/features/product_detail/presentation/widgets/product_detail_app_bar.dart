@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/theme/app_colors.dart';
 
 class ProductDetailAppBar extends StatelessWidget {
@@ -25,7 +24,7 @@ class ProductDetailAppBar extends StatelessWidget {
             child: Center(
               child: Image.asset(
                 'assets/images/app_logo.png',
-                height: 90,
+                height: 40,
                 fit: BoxFit.contain,
               ),
             ),

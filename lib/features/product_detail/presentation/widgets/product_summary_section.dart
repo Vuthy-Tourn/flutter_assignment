@@ -3,12 +3,21 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/price_formatter.dart';
 import '../../../../data/models/product_detail.dart';
+import 'color_selection_sheet.dart';
 import 'rating_stars.dart';
 
 class ProductSummarySection extends StatelessWidget {
   const ProductSummarySection({super.key, required this.product});
 
   final ProductDetail product;
+
+  void _showColorSelector(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.16),
+      builder: (context) => ProductColorSelectionDialog(product: product),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +81,7 @@ class ProductSummarySection extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           FilledButton(
-            onPressed: () {},
+            onPressed: () => _showColorSelector(context),
             style: FilledButton.styleFrom(
               minimumSize: const Size.fromHeight(56),
               backgroundColor: AppColors.accent,

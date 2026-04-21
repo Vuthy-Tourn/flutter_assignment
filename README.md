@@ -1,14 +1,14 @@
-# External Shine
+# Eternal Shine
 
 <p align="center">
   <img src="assets/images/logo.svg" alt="External Shine Logo" width="220" />
 </p>
 
-External Shine is a skincare and beauty e-commerce mobile application built with **Flutter** and **Dart**. The app focuses on a clean shopping experience where users can explore skincare products, view product details, read reviews, and discover related items in a soft, modern interface.
+Eternal Shine is a skincare and beauty e-commerce mobile application built with **Flutter** and **Dart**. The app focuses on a clean shopping experience where users can explore skincare products, view product details, read reviews, and discover related items in a soft, modern interface.
 
 ## General Info
 
-- App name: `External Shine`
+- App name: `Eternal Shine`
 - Project type: `Flutter mobile application`
 - Main topic: `Skincare and beauty e-commerce shop`
 - Built with: `Flutter`, `Dart`, `Material 3`

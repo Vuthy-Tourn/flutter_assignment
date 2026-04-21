@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../pages/product_review_page.dart';
 import 'rating_stars.dart';
 
 class ReviewSummaryCard extends StatelessWidget {
@@ -40,7 +41,13 @@ class ReviewSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           FilledButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const ProductReviewPage(),
+                ),
+              );
+            },
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.accent,
               foregroundColor: Colors.white,

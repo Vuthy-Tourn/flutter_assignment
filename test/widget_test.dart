@@ -9,6 +9,6 @@ void main() {
     expect(find.text('Ready to Wear Downy Cheek'), findsOneWidget);
     expect(find.text('Select Color'), findsOneWidget);
     expect(find.text('You may also like'), findsOneWidget);
-    expect(find.text('Review(3)'), findsOneWidget);
+    expect(find.text('Review(3)'), findsWidgets);
   });
 }

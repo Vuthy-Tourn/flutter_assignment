@@ -3,6 +3,18 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/product_detail.dart';
 
+class ColorSelectionResult {
+  const ColorSelectionResult({
+    required this.selectedOption,
+    required this.quantity,
+    required this.startGlobalOffset,
+  });
+
+  final ProductColorOption selectedOption;
+  final int quantity;
+  final Offset startGlobalOffset;
+}
+
 class ProductColorSelectionDialog extends StatefulWidget {
   const ProductColorSelectionDialog({super.key, required this.product});
 
@@ -17,6 +29,23 @@ class _ProductColorSelectionDialogState
     extends State<ProductColorSelectionDialog> {
   int _selectedIndex = 0;
   int _quantity = 1;
+  final GlobalKey _addToCartButtonKey = GlobalKey();
+
+  void _submitSelection() {
+    final renderBox =
+        _addToCartButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    final startGlobalOffset = renderBox != null
+        ? renderBox.localToGlobal(renderBox.size.center(Offset.zero))
+        : Offset.zero;
+
+    Navigator.of(context).pop(
+      ColorSelectionResult(
+        selectedOption: widget.product.colorOptions[_selectedIndex],
+        quantity: _quantity,
+        startGlobalOffset: startGlobalOffset,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,21 +115,24 @@ class _ProductColorSelectionDialogState
                 ),
                 const SizedBox(width: 18),
                 Expanded(
-                  child: FilledButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(52),
-                      backgroundColor: AppColors.accent,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    key: _addToCartButtonKey,
+                    child: FilledButton(
+                      onPressed: _submitSelection,
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size.fromHeight(52),
+                        backgroundColor: AppColors.accent,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'add to cart',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                      child: const Text(
+                        'add to cart',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

@@ -14,8 +14,8 @@ class DemoProductDetail {
     originalPrice: 57,
     salePrice: 18.7,
     discountPercent: 25,
-    rating: 4.5,
-    reviewCount: 4,
+    rating: 4,
+    reviewCount: 3,
     description: [
       'Creates vivid cheeks with a soft watercolor finish.',
       'Builds up smoothly without disturbing base makeup.',

@@ -7,16 +7,29 @@ import 'color_selection_sheet.dart';
 import 'rating_stars.dart';
 
 class ProductSummarySection extends StatelessWidget {
-  const ProductSummarySection({super.key, required this.product});
+  const ProductSummarySection({
+    super.key,
+    required this.product,
+    required this.displayRating,
+    required this.displayReviewCount,
+    this.onAddToCart,
+  });
 
   final ProductDetail product;
+  final double displayRating;
+  final int displayReviewCount;
+  final ValueChanged<ColorSelectionResult>? onAddToCart;
 
-  void _showColorSelector(BuildContext context) {
-    showDialog<void>(
+  Future<void> _showColorSelector(BuildContext context) async {
+    final result = await showDialog<ColorSelectionResult>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.16),
       builder: (context) => ProductColorSelectionDialog(product: product),
     );
+
+    if (result != null) {
+      onAddToCart?.call(result);
+    }
   }
 
   @override
@@ -62,17 +75,17 @@ class ProductSummarySection extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              RatingStars(rating: product.rating, size: 24),
+              RatingStars(rating: displayRating, size: 24),
               const SizedBox(width: 10),
               Text(
-                product.rating.toStringAsFixed(1),
+                displayRating.toStringAsFixed(1),
                 style: Theme.of(
                   context,
                 ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(width: 12),
               Text(
-                'Review(${product.reviewCount})',
+                'Review($displayReviewCount)',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   decoration: TextDecoration.underline,
                 ),
@@ -81,7 +94,7 @@ class ProductSummarySection extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           FilledButton(
-            onPressed: () => _showColorSelector(context),
+            onPressed: () async => _showColorSelector(context),
             style: FilledButton.styleFrom(
               minimumSize: const Size.fromHeight(56),
               backgroundColor: AppColors.accent,

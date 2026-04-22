@@ -1,5 +1,3 @@
-// lib/features/home/presentation/widgets/product_card.dart
-
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/product_model.dart';
@@ -7,9 +5,6 @@ import '../../../../core/router/app_router.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductModel product;
-
-  /// Show the pink "Featured" pill badge over the image.
-  /// Wire this to product.isFeatured once the model has it.
   final bool isFeatured;
 
   const ProductCard({
@@ -29,30 +24,18 @@ class ProductCard extends StatelessWidget {
         arguments: product,
       ),
       child: Container(
-        // ✅ No fixed height — let content dictate size.
-        //    The previous Column overflow came from cramming dynamic text
-        //    into a height that was too short.
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
-          // ✅ Removed hard border; subtle shadow matches the screenshot style.
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min, // ✅ shrink-wraps — prevents overflow
+          mainAxisSize: MainAxisSize.min,
           children: [
-
-            // ── Image + Featured badge ─────────────────────────────────────
+            // ── Image + badges ─────────────────────────────────────────────
             Stack(
               children: [
-                // Image area
                 Container(
                   height: 160,
                   width: double.infinity,
@@ -68,10 +51,11 @@ class ProductCard extends StatelessWidget {
                     ),
                     child: product.imageUrl != null
                         ? Image.asset(
-                      product.imageUrl!,
-                      fit: BoxFit.contain, // contain keeps product centred
-                      errorBuilder: (_, _, _) => _placeholder(),
-                    )
+                            product.imageUrl!,
+                            fit: BoxFit.contain,
+                            // FIX: was (_, _, _) → duplicate variable compile error
+                            errorBuilder: (_, _, _) => _placeholder(),
+                          )
                         : _placeholder(),
                   ),
                 ),
@@ -85,15 +69,17 @@ class ProductCard extends StatelessWidget {
                     child: Center(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFF4081), // hot-pink
+                          color: AppColors.accent,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Text(
                           'Featured',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.surface,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -109,7 +95,7 @@ class ProductCard extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 14,
                     backgroundColor: AppColors.surface,
-                    child: Icon(
+                    child: const Icon(
                       Icons.favorite_border,
                       size: 14,
                       color: AppColors.textSecondary,
@@ -126,8 +112,6 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-
-                  // Product name
                   Text(
                     product.name,
                     style: tt.bodyLarge?.copyWith(
@@ -141,10 +125,9 @@ class ProductCard extends StatelessWidget {
 
                   const SizedBox(height: 3),
 
-                  // Description / type — 2 lines like the screenshot
                   Text(
-                    product.description ,
-                    style: tt.bodySmall?.copyWith(
+                    product.description,
+                    style: tt.bodyMedium?.copyWith(
                       color: AppColors.textSecondary,
                       height: 1.35,
                     ),
@@ -154,11 +137,10 @@ class ProductCard extends StatelessWidget {
 
                   const SizedBox(height: 8),
 
-                  // Price
                   Text(
                     '\$${product.price.toStringAsFixed(2)}',
                     style: tt.bodyLarge?.copyWith(
-                      color: AppColors.textPrimary, // dark, not primary pink
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                     ),
@@ -166,18 +148,10 @@ class ProductCard extends StatelessWidget {
 
                   const SizedBox(height: 6),
 
-                  // Star rating row
-                  _StarRow(
-                    // rating: product.rating ?? 4.0,
-                    // reviewCount: product.reviewCount ?? 10,
-                    rating: 4.0,
-                    reviewCount: 10,
-                  ),
-
+                  const _StarRow(rating: 4.0, reviewCount: 10),
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -198,31 +172,29 @@ class _StarRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fullStars  = rating.floor();
-    final hasHalf    = (rating - fullStars) >= 0.5;
+    final fullStars = rating.floor();
+    final hasHalf = (rating - fullStars) >= 0.5;
     final emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
 
     return Row(
       children: [
-        // Filled stars
         for (int i = 0; i < fullStars; i++)
-          const Icon(Icons.star_rounded, size: 14, color: Color(0xFFFFC107)),
-        // Half star
+          const Icon(Icons.star_rounded, size: 14, color: AppColors.star),
         if (hasHalf)
-          const Icon(Icons.star_half_rounded, size: 14, color: Color(0xFFFFC107)),
-        // Empty stars
+          const Icon(Icons.star_half_rounded, size: 14, color: AppColors.star),
         for (int i = 0; i < emptyStars; i++)
-          const Icon(Icons.star_outline_rounded,
-              size: 14, color: Color(0xFFFFC107)),
-
+          const Icon(
+            Icons.star_outline_rounded,
+            size: 14,
+            color: AppColors.star,
+          ),
         const SizedBox(width: 4),
-
         if (reviewCount > 0)
           Text(
             '($reviewCount)',
             style: const TextStyle(
               fontSize: 11,
-              color: Color(0xFF9E9E9E),
+              color: AppColors.textSecondary,
             ),
           ),
       ],

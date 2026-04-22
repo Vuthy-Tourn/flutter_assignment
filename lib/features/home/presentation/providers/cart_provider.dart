@@ -1,4 +1,3 @@
-// lib/features/home/presentation/providers/cart_provider.dart
 import 'package:flutter/material.dart';
 import '../../../../data/models/product_model.dart';
 

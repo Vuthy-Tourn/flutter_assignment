@@ -1,3 +1,4 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
@@ -18,18 +19,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Eternal Shine',
       theme: AppTheme.lightTheme,
-
-      // ── Initial route ────────────────────────────────────────
       initialRoute: AppRouter.home,
-
-      // ── Named routes ─────────────────────────────────────────
       routes: {
         AppRouter.home: (_) => const HomeScreen(),
-        AppRouter.productDetail: (context) {
-          final product = ModalRoute.of(context)!.settings.arguments
-          as dynamic ?? DemoProductDetail.product;
-          return ProductDetailPage(product: product);
-        },
+
+        // ProductDetailPage expects a ProductDetail object.
+        // ProductCard currently passes a ProductModel (different type).
+        // Until both models are unified, we use DemoProductDetail as the
+        // data source so the page always opens correctly.
+        // TODO: replace DemoProductDetail.product with a real lookup once
+        //       ProductModel and ProductDetail are merged.
+        AppRouter.productDetail: (_) =>
+            ProductDetailPage(product: DemoProductDetail.product),
       },
     );
   }

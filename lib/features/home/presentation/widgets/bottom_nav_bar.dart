@@ -1,4 +1,4 @@
-
+// lib/features/home/presentation/widgets/bottom_nav_bar.dart
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
@@ -10,11 +10,11 @@ class _NavItem {
 }
 
 const _kItems = [
-  _NavItem(Icons.home_outlined,          Icons.home_rounded,          'Home'),
-  _NavItem(Icons.shopping_cart_outlined, Icons.shopping_cart_rounded,  'Cart'),
-  _NavItem(Icons.history_outlined,       Icons.history_rounded,        'Order'),
-  _NavItem(Icons.mail_outline_rounded,   Icons.mail_rounded,           'Inbox'),
-  _NavItem(Icons.person_outline_rounded, Icons.person_rounded,         'Profile'),
+  _NavItem(Icons.home_outlined, Icons.home_rounded, 'Home'),
+  _NavItem(Icons.shopping_cart_outlined, Icons.shopping_cart_rounded, 'Cart'),
+  _NavItem(Icons.history_outlined, Icons.history_rounded, 'Order'),
+  _NavItem(Icons.mail_outline_rounded, Icons.mail_rounded, 'Inbox'),
+  _NavItem(Icons.person_outline_rounded, Icons.person_rounded, 'Profile'),
 ];
 
 class BottomNavBar extends StatelessWidget {
@@ -34,31 +34,25 @@ class BottomNavBar extends StatelessWidget {
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return ClipRect(
-      // ClipRect only on the sides/bottom — we use an Overflow widget
-      // to let children paint above the bar boundary
       clipBehavior: Clip.none,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.fromLTRB(6, 6, 6, 6 + bottomInset),
-        decoration: BoxDecoration(
+        // Shorter bar — only top border, zero shadow
+        padding: EdgeInsets.fromLTRB(6, 4, 6, 4 + bottomInset),
+        decoration: const BoxDecoration(
           color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary,
-              blurRadius: 20,
-              offset: const Offset(0, -4),
-            ),
-          ],
+          border: Border(top: BorderSide(color: AppColors.border, width: 1)),
+          // No boxShadow at all
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: List.generate(_kItems.length, (i) {
             return _NavTile(
-              item:     _kItems[i],
+              item: _kItems[i],
               isActive: currentIndex == i,
-              badge:    i == 1 && cartCount > 0 ? cartCount : null,
-              onTap:    () => onTap(i),
+              badge: i == 1 && cartCount > 0 ? cartCount : null,
+              onTap: () => onTap(i),
             );
           }),
         ),
@@ -67,7 +61,6 @@ class BottomNavBar extends StatelessWidget {
   }
 }
 
-// ── Animated tile ─────────────────────────────────────────────────────────────
 class _NavTile extends StatefulWidget {
   final _NavItem item;
   final bool isActive;
@@ -102,11 +95,8 @@ class _NavTileState extends State<_NavTile>
   @override
   void didUpdateWidget(_NavTile old) {
     super.didUpdateWidget(old);
-    if (widget.isActive && !old.isActive) {
-      _ctrl.forward(from: 0);
-    } else if (!widget.isActive && old.isActive) {
-      _ctrl.reverse();
-    }
+    if (widget.isActive && !old.isActive) _ctrl.forward(from: 0);
+    if (!widget.isActive && old.isActive) _ctrl.reverse();
   }
 
   @override
@@ -125,13 +115,18 @@ class _NavTileState extends State<_NavTile>
       child: AnimatedBuilder(
         animation: _ctrl,
         builder: (_, _) {
-          final double iconScale  = _iconScaleFor(_ctrl.value);
+          final double iconScale = _iconScaleFor(_ctrl.value);
           final double circleFill = Curves.easeOutCubic.transform(_ctrl.value);
-          final Color  iconColor  = Color.lerp(
-            AppColors.textSecondary,
-            Colors.white,
-            circleFill,
-          )!;
+
+          // Icon is white on top of the circle when active,
+          // textSecondary when inactive (no circle)
+          final Color iconColor = circleFill > 0
+              ? Color.lerp(
+                  AppColors.textSecondary,
+                  AppColors.surface,
+                  circleFill,
+                )!
+              : AppColors.textSecondary;
 
           return SizedBox(
             width: 56,
@@ -139,10 +134,8 @@ class _NavTileState extends State<_NavTile>
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-
-                // ── Icon — overflows upward via Clip.none ────────
+                // ── Icon — lifts only when active ─────────────────
                 Transform.translate(
-                  // lifts upward; parent has Clip.none so nothing is cut
                   offset: Offset(0, -12 * circleFill),
                   child: Transform.scale(
                     scale: iconScale,
@@ -150,24 +143,18 @@ class _NavTileState extends State<_NavTile>
                       clipBehavior: Clip.none,
                       alignment: Alignment.center,
                       children: [
-                        Container(
-                          width: 46,
-                          height: 46,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.primary,
-                            boxShadow: circleFill > 0.1
-                                ? [
-                              BoxShadow(
-                                color: AppColors.primary
-                                    ,
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                                : null,
+                        // Circle ONLY rendered when animating/active
+                        if (circleFill > 0)
+                          Container(
+                            width: 46,
+                            height: 46,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.primary,
+                              // No shadow
+                            ),
                           ),
-                        ),
+
                         Icon(
                           widget.isActive
                               ? widget.item.activeIcon
@@ -175,6 +162,8 @@ class _NavTileState extends State<_NavTile>
                           size: 24,
                           color: iconColor,
                         ),
+
+                        // Badge
                         if (widget.badge != null)
                           Positioned(
                             right: 4,
@@ -182,7 +171,9 @@ class _NavTileState extends State<_NavTile>
                             child: Container(
                               padding: const EdgeInsets.all(3),
                               constraints: const BoxConstraints(
-                                  minWidth: 15, minHeight: 15),
+                                minWidth: 15,
+                                minHeight: 15,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.accent,
                                 borderRadius: BorderRadius.circular(8),
@@ -204,12 +195,12 @@ class _NavTileState extends State<_NavTile>
                   ),
                 ),
 
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
 
-                // ── Label ────────────────────────────────────────
+                // ── Label ─────────────────────────────────────────
                 Text(
                   widget.item.label,
-                  style: tt.bodySmall?.copyWith(
+                  style: tt.bodyMedium?.copyWith(
                     color: widget.isActive
                         ? AppColors.primary
                         : AppColors.textSecondary,
@@ -219,7 +210,6 @@ class _NavTileState extends State<_NavTile>
                     fontSize: 11,
                   ),
                 ),
-
               ],
             ),
           );
@@ -231,11 +221,11 @@ class _NavTileState extends State<_NavTile>
   /// Peak 1.55 → settles at 1.12 when active
   static double _iconScaleFor(double t) {
     if (t <= 0.35) {
-      final seg   = t / 0.35;
+      final seg = t / 0.35;
       final eased = Curves.easeOut.transform(seg);
       return 1.0 + eased * 0.55;
     } else {
-      final seg   = (t - 0.35) / 0.65;
+      final seg = (t - 0.35) / 0.65;
       final eased = Curves.elasticOut.transform(seg);
       return 1.55 - eased * 0.43;
     }

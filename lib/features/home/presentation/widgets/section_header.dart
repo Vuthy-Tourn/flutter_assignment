@@ -1,4 +1,3 @@
-// lib/features/home/presentation/widgets/section_header.dart
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 

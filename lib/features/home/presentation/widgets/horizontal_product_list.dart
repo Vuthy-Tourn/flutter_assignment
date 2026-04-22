@@ -1,4 +1,3 @@
-// lib/features/home/presentation/widgets/horizontal_product_list.dart
 import 'package:flutter/material.dart';
 import '../../../../data/models/product_model.dart';
 import 'product_card.dart';

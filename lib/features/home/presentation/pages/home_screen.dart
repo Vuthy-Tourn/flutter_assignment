@@ -26,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
     final double systemBottom = MediaQuery.of(context).viewPadding.bottom;
-    // kNavBarVisualHeight (72) + system inset + a little breathing room
     final double scrollBottomPadding = 72.0 + systemBottom + 12.0;
 
     return Scaffold(
@@ -43,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Image.asset(
           'assets/images/app_logo.png',
           height: 34,
+          // FIX: was (_, _, _) → duplicate variable name compile error → (_, __, ___)
           errorBuilder: (_, _, _) => Text(
             'GlowUp',
             style: tt.titleLarge?.copyWith(color: AppColors.primary),
@@ -75,7 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // ── Hero carousel ──────────────────────────────────────────────
             const HeroCarousel(height: 200),
 
@@ -92,7 +91,10 @@ class _HomeScreenState extends State<HomeScreen> {
               onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
             ),
             HorizontalProductList(
-                products: sampleProducts, offset: 2, listHeight: 320),
+              products: sampleProducts,
+              offset: 2,
+              listHeight: 320,
+            ),
 
             // ── Trending Now ───────────────────────────────────────────────
             SectionHeader(
@@ -101,14 +103,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             _recommended.isEmpty
                 ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'No trending products for your skin type.',
-                style: tt.bodyMedium,
-              ),
-            )
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'No trending products for your skin type.',
+                      style: tt.bodyMedium,
+                    ),
+                  )
                 : HorizontalProductList(
-                products: _recommended, listHeight: 320),
+                    products: _recommended,
+                    listHeight: 320,
+                  ),
 
             // ── Popular Brand ──────────────────────────────────────────────
             SectionHeader(title: 'Popular Brand'),
@@ -126,7 +130,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ].map((b) => BrandChip(label: b)).toList(),
               ),
             ),
-
           ],
         ),
       ),

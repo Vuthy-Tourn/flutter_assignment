@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../data/models/product_model.dart';
+import '../widgets/home_category_grid.dart';
 import '../widgets/section_header.dart';
 import '../widgets/horizontal_product_list.dart';
 import '../widgets/brand_chip.dart';
@@ -42,8 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Image.asset(
           'assets/images/app_logo.png',
           height: 34,
-          // FIX: was (_, _, _) → duplicate variable name compile error → (_, __, ___)
-          errorBuilder: (_, _, _) => Text(
+          errorBuilder: (context, error, stackTrace) => Text(
             'GlowUp',
             style: tt.titleLarge?.copyWith(color: AppColors.primary),
           ),
@@ -66,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavBar(
         currentIndex: _navIndex,
         onTap: (i) => setState(() => _navIndex = i),
-        // cartCount: context.watch<CartProvider>().count,
       ),
 
       // ── Body ─────────────────────────────────────────────────────────────
@@ -78,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
             // ── Hero carousel ──────────────────────────────────────────────
             const HeroCarousel(height: 200),
 
+            // ── Category grid (flush below carousel, self-padded inside) ───
+            const HomeCategoryGrid(),
             // ── Current Promotion ──────────────────────────────────────────
             SectionHeader(
               title: 'Current Promotion',
@@ -130,6 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ].map((b) => BrandChip(label: b)).toList(),
               ),
             ),
+
+            const SizedBox(height: 16),
           ],
         ),
       ),

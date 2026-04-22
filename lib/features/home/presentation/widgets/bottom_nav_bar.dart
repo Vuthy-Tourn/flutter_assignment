@@ -122,7 +122,7 @@ class _NavTileState extends State<_NavTile>
           // textSecondary when inactive (no circle)
           final Color iconColor = circleFill > 0
               ? Color.lerp(
-                  AppColors.textSecondary,
+                  const Color.fromARGB(255, 255, 255, 255),
                   AppColors.surface,
                   circleFill,
                 )!

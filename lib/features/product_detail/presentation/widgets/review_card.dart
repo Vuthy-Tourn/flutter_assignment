@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -11,6 +13,12 @@ class ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reviewImage = switch ((review.fileImagePath, review.assetPath)) {
+      (final filePath?, _) => Image.file(File(filePath), fit: BoxFit.cover),
+      (_, final assetPath?) => Image.asset(assetPath, fit: BoxFit.cover),
+      _ => null,
+    };
+
     return Container(
       margin: const EdgeInsets.fromLTRB(24, 0, 24, 18),
       padding: const EdgeInsets.all(22),
@@ -61,7 +69,7 @@ class ReviewCard extends StatelessWidget {
               context,
             ).textTheme.bodyLarge?.copyWith(fontSize: 17, height: 1.6),
           ),
-          if (review.assetPath case final assetPath?) ...[
+          if (reviewImage != null) ...[
             const SizedBox(height: 20),
             Container(
               width: 170,
@@ -77,7 +85,7 @@ class ReviewCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(assetPath, fit: BoxFit.cover),
+                  reviewImage,
                   DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(

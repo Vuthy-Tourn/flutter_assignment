@@ -7,6 +7,7 @@ class ProductReview {
     required this.tags,
     required this.avatarText,
     this.assetPath,
+    this.fileImagePath,
     this.profileAssetPath,
   });
 
@@ -17,5 +18,6 @@ class ProductReview {
   final List<String> tags;
   final String avatarText;
   final String? assetPath;
+  final String? fileImagePath;
   final String? profileAssetPath;
 }

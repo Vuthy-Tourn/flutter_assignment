@@ -8,10 +8,12 @@ class ReviewSummaryCard extends StatelessWidget {
     super.key,
     required this.rating,
     required this.reviewCount,
+    required this.onWriteReview,
   });
 
   final double rating;
   final int reviewCount;
+  final Future<void> Function() onWriteReview;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class ReviewSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           FilledButton(
-            onPressed: () {},
+            onPressed: onWriteReview,
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.accent,
               foregroundColor: Colors.white,

@@ -3,16 +3,29 @@ import '../../../../core/theme/app_colors.dart';
 
 class HomeCategoryGrid extends StatelessWidget {
   const HomeCategoryGrid({super.key});
+  
 
-  static const List<_HomeCategoryItem> _items = [
-    _HomeCategoryItem('Best Deal', Icons.spa_outlined),
-    _HomeCategoryItem('New Arrivals', Icons.shopping_bag_outlined),
-    _HomeCategoryItem('Clearance Sale', Icons.local_offer_outlined),
-    _HomeCategoryItem('Time Deal', Icons.watch_later_outlined),
-    _HomeCategoryItem('Skincare', Icons.face_retouching_natural_outlined),
-    _HomeCategoryItem('Make Up', Icons.brush_outlined),
-    _HomeCategoryItem('Supplement', Icons.favorite_border),
-    _HomeCategoryItem('Beauty Tools', Icons.auto_fix_high_outlined),
+static const List<_HomeCategoryItem> _items = [
+    _HomeCategoryItem('Best Deal', 'assets/images/categories/beauty 1.png'),
+    _HomeCategoryItem(
+      'New Arrivals',
+      'assets/images/categories/day-cream 1.png',
+    ),
+    _HomeCategoryItem(
+      'Clearance Sale',
+      'assets/images/categories/essential-oil (2) 1.png',
+    ),
+    _HomeCategoryItem('Time Deal', 'assets/images/categories/gel 1.png'),
+    _HomeCategoryItem('Skincare', 'assets/images/categories/serum (1) 1.png'),
+    _HomeCategoryItem('Make Up', 'assets/images/categories/makeup 1.png'),
+    _HomeCategoryItem(
+      'Supplement',
+      'assets/images/categories/beauty-treatment (2) 1.png',
+    ),
+    _HomeCategoryItem(
+      'Beauty Tools',
+      'assets/images/categories/nail-polish (2) 1.png',
+    ),
   ];
 
   @override
@@ -26,10 +39,11 @@ class HomeCategoryGrid extends StatelessWidget {
         itemCount: _items.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
-          mainAxisExtent: 92,
-          crossAxisSpacing: 8, // tightened so 4 columns breathe evenly
-          mainAxisSpacing: 14,
+          mainAxisExtent: 82,
+          mainAxisSpacing: 10,
+          
         ),
+        padding: EdgeInsets.fromLTRB(5, 12, 5, 4),
         itemBuilder: (context, index) {
           final item = _items[index];
           return Column(
@@ -42,8 +56,10 @@ class HomeCategoryGrid extends StatelessWidget {
                   color: const Color.fromARGB(255, 241, 181, 199),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: Icon(item.icon, color: AppColors.primary, size: 28),
-              ),
+child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Image.asset(item.image, fit: BoxFit.contain),
+                ),              ),
               const SizedBox(height: 6),
               Text(
                 item.label,
@@ -67,7 +83,7 @@ class HomeCategoryGrid extends StatelessWidget {
 }
 
 class _HomeCategoryItem {
-  const _HomeCategoryItem(this.label, this.icon);
+  const _HomeCategoryItem(this.label, this.image);
   final String label;
-  final IconData icon;
+  final String image;
 }

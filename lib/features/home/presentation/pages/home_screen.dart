@@ -1,0 +1,135 @@
+import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../data/models/product_model.dart';
+import '../widgets/section_header.dart';
+import '../widgets/horizontal_product_list.dart';
+import '../widgets/brand_chip.dart';
+import '../widgets/bottom_nav_bar.dart';
+import '../widgets/hero_carousel.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _navIndex = 0;
+  final String _skinType = 'normal';
+
+  List<ProductModel> get _recommended =>
+      sampleProducts.where((p) => p.suitableFor.contains(_skinType)).toList();
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final double systemBottom = MediaQuery.of(context).viewPadding.bottom;
+    // kNavBarVisualHeight (72) + system inset + a little breathing room
+    final double scrollBottomPadding = 72.0 + systemBottom + 12.0;
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      extendBody: true,
+
+      // ── AppBar ───────────────────────────────────────────────────────────
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        shadowColor: AppColors.border,
+        centerTitle: true,
+        title: Image.asset(
+          'assets/images/app_logo.png',
+          height: 34,
+          errorBuilder: (_, _, _) => Text(
+            'GlowUp',
+            style: tt.titleLarge?.copyWith(color: AppColors.primary),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_none_outlined),
+            color: AppColors.textPrimary,
+            onPressed: () => Navigator.pushNamed(context, AppRouter.inbox),
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_bag_outlined),
+            color: AppColors.textPrimary,
+            onPressed: () => Navigator.pushNamed(context, AppRouter.cart),
+          ),
+        ],
+      ),
+
+      // ── Bottom nav ───────────────────────────────────────────────────────
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _navIndex,
+        onTap: (i) => setState(() => _navIndex = i),
+        // cartCount: context.watch<CartProvider>().count,
+      ),
+
+      // ── Body ─────────────────────────────────────────────────────────────
+      body: SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: scrollBottomPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            // ── Hero carousel ──────────────────────────────────────────────
+            const HeroCarousel(height: 200),
+
+            // ── Current Promotion ──────────────────────────────────────────
+            SectionHeader(
+              title: 'Current Promotion',
+              onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
+            ),
+            HorizontalProductList(products: sampleProducts, listHeight: 320),
+
+            // ── Best Deal ──────────────────────────────────────────────────
+            SectionHeader(
+              title: 'Best Deal',
+              onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
+            ),
+            HorizontalProductList(
+                products: sampleProducts, offset: 2, listHeight: 320),
+
+            // ── Trending Now ───────────────────────────────────────────────
+            SectionHeader(
+              title: 'Trending Now',
+              onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
+            ),
+            _recommended.isEmpty
+                ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'No trending products for your skin type.',
+                style: tt.bodyMedium,
+              ),
+            )
+                : HorizontalProductList(
+                products: _recommended, listHeight: 320),
+
+            // ── Popular Brand ──────────────────────────────────────────────
+            SectionHeader(title: 'Popular Brand'),
+            SizedBox(
+              height: 64,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: const [
+                  'CeraVe',
+                  'Cetaphil',
+                  'The Ordinary',
+                  'Laneige',
+                  'Innisfree',
+                ].map((b) => BrandChip(label: b)).toList(),
+              ),
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+}

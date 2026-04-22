@@ -4,7 +4,7 @@ import 'package:flutter_product_detail_app/main.dart';
 
 void main() {
   testWidgets('renders product detail content', (WidgetTester tester) async {
-    await tester.pumpWidget(const ProductDetailApp());
+    await tester.pumpWidget(const MyApp());
 
     expect(find.text('Ready to Wear Downy Cheek'), findsOneWidget);
     expect(find.text('Select Color'), findsOneWidget);

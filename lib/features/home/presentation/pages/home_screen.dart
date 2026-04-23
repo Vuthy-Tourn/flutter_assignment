@@ -23,6 +23,27 @@ class _HomeScreenState extends State<HomeScreen> {
   List<ProductModel> get _recommended =>
       sampleProducts.where((p) => p.suitableFor.contains(_skinType)).toList();
 
+  void _onNavTap(int index) {
+    setState(() => _navIndex = index);
+
+    switch (index) {
+      case 0: // Home — already here
+        break;
+      case 1: // Cart — not ready yet
+      // Navigator.pushNamed(context, AppRouter.cart);
+        break;
+      case 2: // Order — not ready yet
+      // Navigator.pushNamed(context, AppRouter.order);
+        break;
+      case 3: // Inbox — not ready yet
+      // Navigator.pushNamed(context, AppRouter.inbox);
+        break;
+      case 4: // Profile — not ready yet
+      // Navigator.pushNamed(context, AppRouter.profile);
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
@@ -51,12 +72,12 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none_outlined),
-            color: AppColors.textPrimary,
+            color: AppColors.secondary,
             onPressed: () => Navigator.pushNamed(context, AppRouter.inbox),
           ),
           IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined),
-            color: AppColors.textPrimary,
+            icon: const Icon(Icons.search_outlined),
+            color: AppColors.secondary,
             onPressed: () => Navigator.pushNamed(context, AppRouter.cart),
           ),
         ],
@@ -65,7 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
       // ── Bottom nav ───────────────────────────────────────────────────────
       bottomNavigationBar: BottomNavBar(
         currentIndex: _navIndex,
-        onTap: (i) => setState(() => _navIndex = i),
+        cartCount: 0,
+        onTap: _onNavTap, // 👈 wired up
       ),
 
       // ── Body ─────────────────────────────────────────────────────────────
@@ -77,8 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
             // ── Hero carousel ──────────────────────────────────────────────
             const HeroCarousel(height: 200),
 
-            // ── Category grid (flush below carousel, self-padded inside) ───
+            // ── Category grid ──────────────────────────────────────────────
             const HomeCategoryGrid(),
+
             // ── Current Promotion ──────────────────────────────────────────
             SectionHeader(
               title: 'Current Promotion',
@@ -104,33 +127,20 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             _recommended.isEmpty
                 ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'No trending products for your skin type.',
-                      style: tt.bodyMedium,
-                    ),
-                  )
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'No trending products for your skin type.',
+                style: tt.bodyMedium,
+              ),
+            )
                 : HorizontalProductList(
-                    products: _recommended,
-                    listHeight: 320,
-                  ),
+              products: _recommended,
+              listHeight: 320,
+            ),
 
             // ── Popular Brand ──────────────────────────────────────────────
             SectionHeader(title: 'Popular Brand'),
-            SizedBox(
-              height: 64,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: const [
-                  'CeraVe',
-                  'Cetaphil',
-                  'The Ordinary',
-                  'Laneige',
-                  'Innisfree',
-                ].map((b) => BrandChip(label: b)).toList(),
-              ),
-            ),
+            BrandMarquee(images: brandList, speed: 55),
 
             const SizedBox(height: 16),
           ],

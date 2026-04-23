@@ -4,6 +4,7 @@ import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'data/demo/demo_product_detail.dart';
 import 'features/home/presentation/pages/home_screen.dart';
+import 'features/home/presentation/pages/category_page.dart';
 import 'features/product_detail/presentation/pages/product_detail_page.dart';
 
 void main() {
@@ -23,12 +24,12 @@ class MyApp extends StatelessWidget {
       routes: {
         AppRouter.home: (_) => const HomeScreen(),
 
-        // ProductDetailPage expects a ProductDetail object.
-        // ProductCard currently passes a ProductModel (different type).
-        // Until both models are unified, we use DemoProductDetail as the
-        // data source so the page always opens correctly.
-        // TODO: replace DemoProductDetail.product with a real lookup once
-        //       ProductModel and ProductDetail are merged.
+        // One route handles every category.
+        // The label string is passed as arguments from HomeCategoryGrid.
+        // CategoryPage reads it with ModalRoute.of(context)?.settings.arguments
+        AppRouter.category: (_) => const CategoryPage(),
+
+        // ProductDetailPage always uses demo data until models are unified.
         AppRouter.productDetail: (_) =>
             ProductDetailPage(product: DemoProductDetail.product),
       },

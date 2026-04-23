@@ -116,7 +116,7 @@ This script will:
 - Commit with your message
 - Push to your current branch
 
-### First Time Setup
+### First Time Setup ( Use Git Bash ) -> ( Optional but useful )
 
 Make the script executable:
 

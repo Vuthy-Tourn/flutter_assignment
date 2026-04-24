@@ -1,3 +1,5 @@
+// Update your existing home_screen.dart
+
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/router/app_router.dart';
@@ -8,6 +10,7 @@ import '../widgets/horizontal_product_list.dart';
 import '../widgets/brand_chip.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hero_carousel.dart';
+import 'notification_screen.dart'; // 👈 Import notification page
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,20 +32,29 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (index) {
       case 0: // Home — already here
         break;
-      case 1: // Cart — not ready yet
-      // Navigator.pushNamed(context, AppRouter.cart);
+      case 1: // Cart
+        // Navigator.pushNamed(context, AppRouter.cart);
         break;
-      case 2: // Order — not ready yet
-      // Navigator.pushNamed(context, AppRouter.order);
+      case 2: // Order
+        // Navigator.pushNamed(context, AppRouter.order);
         break;
-      case 3: // Inbox — not ready yet
-      // Navigator.pushNamed(context, AppRouter.inbox);
+      case 3: // Inbox
+        // Navigator.pushNamed(context, AppRouter.inbox);
         break;
-      case 4: // Profile — not ready yet
-      // Navigator.pushNamed(context, AppRouter.profile);
+      case 4: // Profile
+        // Navigator.pushNamed(context, AppRouter.profile);
         break;
     }
   }
+
+  // void _openNotifications() {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => const NotificationPage(),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_outlined),
-            color: AppColors.secondary,
-            onPressed: () => Navigator.pushNamed(context, AppRouter.inbox),
-          ),
+          NotificationIconButton(count: 4),
+              
           IconButton(
             icon: const Icon(Icons.search_outlined),
             color: AppColors.secondary,
@@ -87,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavBar(
         currentIndex: _navIndex,
         cartCount: 0,
-        onTap: _onNavTap, // 👈 wired up
+        onTap: _onNavTap,
       ),
 
       // ── Body ─────────────────────────────────────────────────────────────
@@ -127,16 +136,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             _recommended.isEmpty
                 ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'No trending products for your skin type.',
-                style: tt.bodyMedium,
-              ),
-            )
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'No trending products for your skin type.',
+                      style: tt.bodyMedium,
+                    ),
+                  )
                 : HorizontalProductList(
-              products: _recommended,
-              listHeight: 320,
-            ),
+                    products: _recommended,
+                    listHeight: 320,
+                  ),
 
             // ── Popular Brand ──────────────────────────────────────────────
             SectionHeader(title: 'Popular Brand'),

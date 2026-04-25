@@ -10,7 +10,7 @@ import '../widgets/horizontal_product_list.dart';
 import '../widgets/brand_chip.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hero_carousel.dart';
-import 'notification_screen.dart'; // 👈 Import notification page
+import 'notification_screen.dart'; 
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // Navigator.pushNamed(context, AppRouter.order);
         break;
       case 3: // Inbox
-        // Navigator.pushNamed(context, AppRouter.inbox);
+        Navigator.pushNamed(context, AppRouter.inbox);
         break;
       case 4: // Profile
         // Navigator.pushNamed(context, AppRouter.profile);

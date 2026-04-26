@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0: // Home — already here
         break;
       case 1: // Cart — not ready yet
-      // Navigator.pushNamed(context, AppRouter.cart);
+      Navigator.pushNamed(context, AppRouter.cart);
         break;
       case 2: // Order — not ready yet
       // Navigator.pushNamed(context, AppRouter.order);

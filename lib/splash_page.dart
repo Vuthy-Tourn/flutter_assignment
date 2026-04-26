@@ -13,7 +13,9 @@ class EternalShineApp extends StatelessWidget {
     return MaterialApp(
       title: 'Eternal Shine',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true),
+      theme: ThemeData(
+        useMaterial3: true,
+      ),
       home: const SplashScreen(),
     );
   }
@@ -33,6 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    // Navigate to Onboarding after 3 seconds
     Timer(const Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const OnboardingScreen()),
@@ -42,23 +45,22 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFED83A1),
+    return const Scaffold(
+      backgroundColor: Color(0xFFED83A1), // Pink color from your screenshot
       body: Center(
-        child: Column( // Removed 'const' from here
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
-            // Ensure this file exists in your assets/images folder!
-            Image.asset(
-              'assets/images/app_logo.png',
-              height: 100,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return const Text('Logo Placeholder', style: TextStyle(color: Colors.white));
-              },
+            Text(
+              'Eternal\nShine',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                height: 1.0,
+              ),
             ),
-            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -80,27 +82,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
-  // Make sure these filenames match your actual uploaded files
   final List<Map<String, String>> onboardingData = [
     {
       "title": "Your Personal Beauty Store",
-      "subtitle": "Shop top beauty products handpicked for your skin.",
-      "image": "assets/images/image_8b2150.jpg"
+      "subtitle": "Shop top beauty products handpicked for your skin. Simple, smart, and tailored to you.",
+      "image": "assets/images/onboarding1.png"
     },
     {
       "title": "Tell Us About Your Skin",
-      "subtitle": "Answer a few quick questions for perfect recommendations.",
-      "image": "assets/images/image_8b2131.jpg"
+      "subtitle": "Answer a few quick questions so we can recommend the perfect products for your needs.",
+      "image": "assets/images/onboarding2.png"
     },
     {
       "title": "Personalize Your Glow",
-      "subtitle": "Select your concerns for more accurate matches.",
-      "image": "assets/images/image_8b2112.jpg"
+      "subtitle": "Select your concerns—like acne, dryness, or dullness—for more accurate product matches.",
+      "image": "assets/images/onboarding3.png"
     },
     {
       "title": "Let's Glow",
-      "subtitle": "Start browsing personalized picks and glow effortlessly.",
-      "image": "assets/images/image_8b20f5.jpg"
+      "subtitle": "Start browsing personalized picks, build your routine, and glow effortlessly.",
+      "image": "assets/images/onboarding4.png"
     },
   ];
 
@@ -112,7 +113,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           children: [
             const Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.0),
+              padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
               child: Text(
                 'Eternal\nShine',
                 textAlign: TextAlign.center,
@@ -163,7 +164,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   duration: const Duration(milliseconds: 300), curve: Curves.ease);
             }
           },
-          child: const Text("Skip", style: TextStyle(color: Colors.grey, fontSize: 16)),
+          child: Text(
+            _currentPage == 0 ? "Skip" : "Back",
+            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
         Row(
           children: List.generate(
@@ -172,14 +176,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
         GestureDetector(
-          onTap: () {
+          onTap: () { // FIXED: changed from onPressed to onTap
             _pageController.nextPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.ease,
             );
           },
           child: Container(
-            height: 50, width: 50,
+            height: 50,
+            width: 50,
             decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
             child: const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.black),
           ),
@@ -194,16 +199,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Expanded(
           child: ElevatedButton(
             onPressed: () {},
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Colors.black),
-            child: const Text('Login'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              elevation: 0,
+            ),
+            child: const Text('Login', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: ElevatedButton(
             onPressed: () {},
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFED83A1), foregroundColor: Colors.white),
-            child: const Text('Sign up'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFED83A1),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              elevation: 0,
+            ),
+            child: const Text('Sign up', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ),
       ],
@@ -217,7 +232,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       height: 8,
       width: _currentPage == index ? 24 : 8,
       decoration: BoxDecoration(
-        color: _currentPage == index ? const Color(0xFFED83A1) : Colors.grey.withValues(alpha: 0.5),
+        // FIXED: changed withOpacity to withValues
+        color: _currentPage == index ? Colors.white : Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -239,20 +255,31 @@ class OnboardingContent extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Column(
             children: [
-              Text(title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF331B1B)),
+              ),
               const SizedBox(height: 12),
-              Text(subtitle, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14, color: Color(0xFF5B4A4A)),
+              ),
             ],
           ),
         ),
         const Spacer(),
         Expanded(
-          flex: 6,
-          child: Image.asset(
-            image,
-            fit: BoxFit.cover,
+          flex: 4,
+          child: Container(
             width: double.infinity,
-            errorBuilder: (context, error, stackTrace) => Center(child: Text("Missing: $image")),
+            decoration: BoxDecoration(
+              // FIXED: changed withOpacity to withValues
+              color: Colors.grey.withValues(alpha: 0.2),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+            ),
+            child: Center(child: Text("Image Placeholder: $image")),
           ),
         ),
       ],

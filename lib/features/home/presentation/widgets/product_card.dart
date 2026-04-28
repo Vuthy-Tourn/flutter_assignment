@@ -1,3 +1,4 @@
+// lib/features/home/presentation/widgets/product_card.dart
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/product_model.dart';
@@ -14,8 +15,8 @@ class ProductCard extends StatelessWidget {
   const ProductCard({
     super.key,
     required this.product,
-    this.isFeatured    = false,
-    this.isNewArrival  = false,
+    this.isFeatured = false,
+    this.isNewArrival = false,
     this.discountPercent,
   });
 
@@ -26,7 +27,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt         = Theme.of(context).textTheme;
+    final tt = Theme.of(context).textTheme;
     final hasDiscount = discountPercent != null && discountPercent! > 0;
 
     return GestureDetector(
@@ -46,7 +47,7 @@ class ProductCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // ── Image + badges ───────────────────────────────────
+              // ── Image + badges ─────────────────────────────────
               Stack(
                 children: [
                   Container(
@@ -63,22 +64,27 @@ class ProductCard extends StatelessWidget {
                         top: Radius.circular(16),
                       ),
                       child: product.imageUrl != null
-                          ? Image.asset(
-                        product.imageUrl!,
-                        fit: BoxFit.contain,
-                        errorBuilder: (ctx, err, stack) => _placeholder(),
-                      )
+                          ? Image.network(
+                              product.imageUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, _, _) => _placeholder(),
+                            )
                           : _placeholder(),
                     ),
                   ),
 
-                  // Featured pill (top-center)
+                  // Featured pill — top-center
                   if (isFeatured)
                     Positioned(
-                      top: 10, left: 0, right: 0,
+                      top: 10,
+                      left: 0,
+                      right: 0,
                       child: Center(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.accent,
                             borderRadius: BorderRadius.circular(20),
@@ -95,20 +101,22 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
 
-                  // New badge (top-left, green)
+                  // New badge — top-left
                   if (isNewArrival)
                     Positioned(
-                      top: 10, left: 10,
+                      top: 10,
+                      left: 10,
                       child: BadgeWidget(
                         label: 'New',
                         color: const Color(0xFF2E7D32),
                       ),
                     ),
 
-                  // Discount badge (top-right, accent)
+                  // Discount badge — top-right
                   if (hasDiscount)
                     Positioned(
-                      top: 10, right: 10,
+                      top: 10,
+                      right: 10,
                       child: BadgeWidget(
                         label: '-$discountPercent%',
                         color: AppColors.accent,
@@ -117,7 +125,7 @@ class ProductCard extends StatelessWidget {
                 ],
               ),
 
-              // ── Text details ─────────────────────────────────────
+              // ── Text details ───────────────────────────────────
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                 child: Column(
@@ -178,7 +186,12 @@ class ProductCard extends StatelessWidget {
 
                     const SizedBox(height: 4),
 
-                    const StarRow(rating: 4.0, reviewCount: 10),
+                    // FIX: was hardcoded const StarRow(rating: 4.0, reviewCount: 10)
+                    // now reads directly from ProductModel fields
+                    StarRow(
+                      rating: product.rating,
+                      reviewCount: product.reviewCount,
+                    ),
                   ],
                 ),
               ),

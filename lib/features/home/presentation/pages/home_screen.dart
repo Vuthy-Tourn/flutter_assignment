@@ -9,6 +9,7 @@ import '../widgets/brand_chip.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hero_carousel.dart';
 
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -32,8 +33,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1: // Cart — not ready yet
       // Navigator.pushNamed(context, AppRouter.cart);
         break;
-      case 2: // Order — not ready yet
-      // Navigator.pushNamed(context, AppRouter.order);
+       case 2: // Order — not ready yet
+      Navigator.pushNamed(context, AppRouter.order);
         break;
       case 3: // Inbox — not ready yet
       // Navigator.pushNamed(context, AppRouter.inbox);

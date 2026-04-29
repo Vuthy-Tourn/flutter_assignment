@@ -1,4 +1,3 @@
-// lib/features/auth/presentation/pages/login_page.dart
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/router/app_router.dart';
@@ -57,7 +56,11 @@ class _LoginPageState extends State<LoginPage> {
     await Future.delayed(const Duration(seconds: 2)); // Replace with real auth
     if (!mounted) return;
     setState(() => _isLoading = false);
-    Navigator.pushReplacementNamed(context, AppRouter.home);
+    Navigator.pushNamedAndRemoveUntil(
+  context,
+  AppRouter.home,
+  (route) => false,
+);
   }
 
   @override

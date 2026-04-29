@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:flutter_product_detail_app/features/home/presentation/pages/notification_screen.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/product_model.dart';
 import '../widgets/home_category_grid.dart';
 import '../widgets/section_header.dart';
@@ -9,7 +9,7 @@ import '../widgets/horizontal_product_list.dart';
 import '../widgets/brand_chip.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hero_carousel.dart';
-import 'notification_screen.dart'; 
+import '../../../order_page/presentation/pages/order_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,45 +27,45 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onNavTap(int index) {
     setState(() => _navIndex = index);
-
-    switch (index) {
-      case 0: // Home — already here
-        break;
-      case 1: // Cart
-        // Navigator.pushNamed(context, AppRouter.cart);
-        break;
-      case 2: // Order
-        // Navigator.pushNamed(context, AppRouter.order);
-        break;
-      case 3: // Inbox
-        Navigator.pushNamed(context, AppRouter.inbox);
-        break;
-      case 4: // Profile
-        // Navigator.pushNamed(context, AppRouter.profile);
-        break;
-    }
   }
-
-  // void _openNotifications() {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => const NotificationPage(),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    final double systemBottom = MediaQuery.of(context).viewPadding.bottom;
-    final double scrollBottomPadding = 72.0 + systemBottom + 12.0;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       extendBody: true,
 
-      // ── AppBar ───────────────────────────────────────────────────────────
+      // ================= BODY (PAGE SWITCHING) =================
+      body: IndexedStack(
+        index: _navIndex,
+        children: [
+          _buildHomePage(tt), // 0 = Home
+          const _CartPage(), // 1 = Cart (placeholder)
+          const OrderPage(), // 2 = Order
+          const _InboxPage(), // 3 = Inbox (placeholder)
+          const _ProfilePage(), // 4 = Profile (placeholder)
+        ],
+      ),
+      // ================= BOTTOM NAV =================
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _navIndex,
+        // cartCount: 2,
+        onTap: _onNavTap,
+      ),
+    );
+  }
+
+  // ================= HOME CONTENT =================
+  Widget _buildHomePage(TextTheme tt) {
+    final double systemBottom = MediaQuery.of(context).viewPadding.bottom;
+    final double scrollBottomPadding = 72.0 + systemBottom + 12.0;
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+
+      // ── AppBar ─────────────────────────────────────
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -86,53 +86,32 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.search_outlined),
             color: AppColors.secondary,
-            onPressed: () => Navigator.pushNamed(context, AppRouter.cart),
+            onPressed: () => Navigator.pushNamed(context, AppRouter.search),
           ),
         ],
       ),
 
-      // ── Bottom nav ───────────────────────────────────────────────────────
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _navIndex,
-        cartCount: 0,
-        onTap: _onNavTap,
-      ),
-
-      // ── Body ─────────────────────────────────────────────────────────────
+      // ── Body ───────────────────────────────────────
       body: SingleChildScrollView(
         padding: EdgeInsets.only(bottom: scrollBottomPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Hero carousel ──────────────────────────────────────────────
             const HeroCarousel(height: 200),
 
-            // ── Category grid ──────────────────────────────────────────────
             const HomeCategoryGrid(),
 
-            // ── Current Promotion ──────────────────────────────────────────
-            SectionHeader(
-              title: 'Current Promotion',
-              onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
-            ),
+            SectionHeader(title: 'Current Promotion', onSeeAll: () {}),
             HorizontalProductList(products: sampleProducts, listHeight: 320),
 
-            // ── Best Deal ──────────────────────────────────────────────────
-            SectionHeader(
-              title: 'Best Deal',
-              onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
-            ),
+            SectionHeader(title: 'Best Deal', onSeeAll: () {}),
             HorizontalProductList(
               products: sampleProducts,
               offset: 2,
               listHeight: 320,
             ),
 
-            // ── Trending Now ───────────────────────────────────────────────
-            SectionHeader(
-              title: 'Trending Now',
-              onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
-            ),
+            SectionHeader(title: 'Trending Now', onSeeAll: () {}),
             _recommended.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -146,7 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     listHeight: 320,
                   ),
 
-            // ── Popular Brand ──────────────────────────────────────────────
             SectionHeader(title: 'Popular Brand'),
             BrandMarquee(images: brandList, speed: 55),
 
@@ -155,5 +133,34 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+}
+
+// ================= PLACEHOLDER PAGES =================
+
+class _CartPage extends StatelessWidget {
+  const _CartPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("Cart Page")));
+  }
+}
+
+class _InboxPage extends StatelessWidget {
+  const _InboxPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("Inbox Page")));
+  }
+}
+
+class _ProfilePage extends StatelessWidget {
+  const _ProfilePage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("Profile Page")));
   }
 }

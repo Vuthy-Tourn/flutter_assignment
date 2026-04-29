@@ -4,7 +4,6 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/product_model.dart';
 import '../../../../data/constants/category_constants.dart';
-import '../widgets/bottom_nav_bar.dart';
 import '../widgets/product_card.dart';
 
 class CategoryPage extends StatefulWidget {
@@ -15,7 +14,6 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
-  int _navIndex = 0;
   String _selectedFilter = 'All';
 
   List<String> _filtersFor(String title) =>
@@ -198,10 +196,6 @@ class _CategoryPageState extends State<CategoryPage> {
         ],
       ),
 
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _navIndex,
-        onTap: (i) => setState(() => _navIndex = i),
-      ),
 
       body: Column(
         children: [

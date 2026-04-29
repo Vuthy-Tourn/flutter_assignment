@@ -1,4 +1,3 @@
-// lib/features/auth/presentation/pages/forgot_password_page.dart
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/auth_shared_widgets.dart';

@@ -1,5 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_product_detail_app/features/Auth/presentation/pages/login_page.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'data/demo/demo_product_detail.dart';
@@ -20,8 +21,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Eternal Shine',
       theme: AppTheme.lightTheme,
-      initialRoute: AppRouter.home,
+      initialRoute: AppRouter.login,
       routes: {
+        AppRouter.login: (_) => const LoginPage(),
         AppRouter.home: (_) => const HomeScreen(),
 
         // One route handles every category.

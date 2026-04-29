@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_product_detail_app/main.dart';
+import 'package:flutter_product_detail_app/features/main.dart';
 
 void main() {
   testWidgets('renders product detail content', (WidgetTester tester) async {

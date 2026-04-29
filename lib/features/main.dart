@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // This connects to the code you just shared
-
+import 'package:flutter_product_detail_app/features/product_detail/presentation/auth/login_page.dart';
 void main() {
   runApp(const MyApp());
 }

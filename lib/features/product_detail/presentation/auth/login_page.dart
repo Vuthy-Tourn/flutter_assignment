@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/theme/app_colors.dart';
 import 'home_page.dart';
 import 'sign_up_page.dart';
@@ -32,6 +31,27 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  // Helper widget to create the circular social buttons
+  Widget _socialButton(String iconPath) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.grey.shade200),
+        color: Colors.white,
+      ),
+      child: Image.asset(
+        iconPath,
+        height: 24,
+        width: 24,
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback if the image asset is missing
+          return const Icon(Icons.help_outline, size: 24, color: Colors.grey);
+        },
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -41,9 +61,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // ប្រើប្រាស់ពណ៌ដែលមិត្តរួមក្រុមរបស់អ្នកបានកំណត់ទុក
     final Color pinkColor = AppColors.primary;
-    // Updated to use .withValues() to fix the deprecation warning
     final Color lightPinkFill = pinkColor.withValues(alpha: 0.1);
 
     return Scaffold(
@@ -55,17 +73,20 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 40),
-                // ប្រើ Logo ដែលមានស្រាប់ក្នុង Assets របស់ក្រុម
-                Image.asset('assets/images/app_logo.png', height: 50, fit: BoxFit.contain),
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
+                // Logo
+                Image.asset('assets/images/app_logo.png', height: 40, fit: BoxFit.contain),
+                const SizedBox(height: 10),
                 const Text(
                   "Sign in to your\nAccount",
                   style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Colors.black87, height: 1.2),
                 ),
                 const SizedBox(height: 10),
-                Text("Enter your email and password to log in", style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
+                Text("Enter your email and password to log in",
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
                 const SizedBox(height: 40),
+
+                // Email Field
                 const Text("Email", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                 const SizedBox(height: 8),
                 TextField(
@@ -80,6 +101,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
+
+                // Password Field
                 const Text("Password", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                 const SizedBox(height: 8),
                 TextField(
@@ -97,6 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
                   ),
                 ),
+
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -105,6 +129,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
+
+                // Login Button
                 SizedBox(
                   width: double.infinity,
                   height: 56,
@@ -120,7 +146,38 @@ class _LoginPageState extends State<LoginPage> {
                         : const Text("Log In", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                 ),
-                const SizedBox(height: 40),
+
+                const SizedBox(height: 30),
+
+                // --- OR LOGIN WITH DIVIDER ---
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: Colors.grey.shade300, thickness: 0.5)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text("Or login with", style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+                    ),
+                    Expanded(child: Divider(color: Colors.grey.shade300, thickness: 0.5)),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
+
+                // --- SOCIAL BUTTONS ---
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _socialButton('assets/images/google_icon.png'),
+                    const SizedBox(width: 20),
+                    _socialButton('assets/images/facebook_icon.png'),
+                    const SizedBox(width: 20),
+                    _socialButton('assets/images/apple_icon.png'),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
+
+                // Sign Up Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

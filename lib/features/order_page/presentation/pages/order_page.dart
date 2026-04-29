@@ -83,7 +83,7 @@ class _OrderPageState extends State<OrderPage> {
             'Eternal\nShine',
             textAlign: TextAlign.center,
             style: tt.titleSmall?.copyWith(
-              color: AppColors.primary,
+              color: AppColors.primaryLight,
               fontWeight: FontWeight.w700,
               height: 1.1,
             ),

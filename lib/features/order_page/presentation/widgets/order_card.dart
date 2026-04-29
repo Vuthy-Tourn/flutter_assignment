@@ -1,4 +1,3 @@
-// lib/features/order_page/presentation/widgets/order_card.dart
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../pages/order_page.dart';
@@ -8,16 +7,29 @@ class OrderCard extends StatelessWidget {
 
   const OrderCard({super.key, required this.order});
 
-  Color _statusColor(OrderFilter status) {
+  Color _statusBg(OrderFilter status) {
     switch (status) {
       case OrderFilter.processing:
-        return const Color(0xFFFFA726); // amber
-      case OrderFilter.orderFailed:
-        return AppColors.primary;
+        return AppColors.warningLight;
       case OrderFilter.successful:
-        return const Color(0xFF66BB6A); // green
+        return AppColors.successLight;
+      case OrderFilter.orderFailed:
+        return AppColors.errorLight;
       case OrderFilter.all:
-        return AppColors.textSecondary;
+        return AppColors.primaryLight;
+    }
+  }
+
+  Color _statusText(OrderFilter status) {
+    switch (status) {
+      case OrderFilter.processing:
+        return AppColors.warning;
+      case OrderFilter.successful:
+        return AppColors.success;
+      case OrderFilter.orderFailed:
+        return AppColors.error;
+      case OrderFilter.all:
+        return AppColors.primary;
     }
   }
 
@@ -26,7 +38,7 @@ class OrderCard extends StatelessWidget {
       case OrderFilter.processing:
         return 'Processing';
       case OrderFilter.orderFailed:
-        return 'Order Failed';
+        return 'Failed';
       case OrderFilter.successful:
         return 'Delivered';
       case OrderFilter.all:
@@ -37,65 +49,56 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    final OrderFilter status = order['status'] as OrderFilter;
-    final bool hasDeliveryBadge = order['hasDeliveryBadge'] as bool;
-    final double price = order['price'] as double;
-    final int quantity = order['quantity'] as int;
+    final OrderFilter status = order['status'];
+    final bool hasDeliveryBadge = order['hasDeliveryBadge'];
+    final double price = order['price'];
+    final int quantity = order['quantity'];
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.border,
+        ), // ✅ clean instead of shadow
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Product image
+            // Image
             Stack(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.asset(
-                    order['image'] as String,
+                    order['image'],
                     width: 72,
                     height: 72,
                     fit: BoxFit.cover,
                     errorBuilder: (_, _, _) => Container(
                       width: 72,
                       height: 72,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      color: AppColors.primaryLight,
                       child: Icon(
                         Icons.shopping_bag_outlined,
                         color: AppColors.primary,
-                        size: 28,
                       ),
                     ),
                   ),
                 ),
-                // Delivery badge (green dot for delivered)
+
                 if (hasDeliveryBadge)
                   Positioned(
                     top: 4,
                     right: 4,
                     child: Container(
-                      width: 14,
-                      height: 14,
+                      width: 12,
+                      height: 12,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF66BB6A),
+                        color: AppColors.success,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
+                        border: Border.all(color: Colors.white, width: 1),
                       ),
                     ),
                   ),
@@ -104,33 +107,35 @@ class OrderCard extends StatelessWidget {
 
             const SizedBox(width: 12),
 
-            // Product info
+            // Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Status chip
+                  // Status
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 2),
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: _statusColor(status),
-                      borderRadius: BorderRadius.circular(6),
+                      color: _statusBg(status),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       _statusLabel(status),
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: _statusColor(status),
+                        color: _statusText(status),
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
 
                   Text(
-                    order['name'] as String,
+                    order['name'],
                     style: tt.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
@@ -138,7 +143,7 @@ class OrderCard extends StatelessWidget {
                   ),
 
                   Text(
-                    order['description'] as String,
+                    order['description'],
                     style: tt.bodySmall?.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -147,36 +152,31 @@ class OrderCard extends StatelessWidget {
                   ),
 
                   Text(
-                    order['brand'] as String,
+                    order['brand'],
                     style: tt.labelSmall?.copyWith(
                       color: AppColors.textSecondary,
-                      fontSize: 10,
                     ),
                   ),
 
                   const SizedBox(height: 4),
 
-                  Row(
-                    children: [
-                      Text(
-                        '\$${price.toStringAsFixed(price % 1 == 0 ? 0 : 2)}',
-                        style: tt.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    '\$${price.toStringAsFixed(2)}',
+                    style: tt.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ],
               ),
             ),
 
-            // Quantity badge
+            // Quantity
             Container(
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,

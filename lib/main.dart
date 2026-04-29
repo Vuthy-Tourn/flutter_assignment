@@ -3,6 +3,7 @@ import 'package:flutter_product_detail_app/features/Auth/presentation/pages/logi
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'data/demo/demo_product_detail.dart';
+import 'features/cart/presentation/page/payment.dart';
 import 'features/home/presentation/pages/home_screen.dart';
 import 'features/home/presentation/pages/category_page.dart';
 import 'features/product_detail/presentation/pages/product_detail_page.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
       routes: {
         AppRouter.login: (_) => const LoginPage(),
         AppRouter.home: (_) => const HomeScreen(),
+        AppRouter.payment: (_) => const PaymentPage(),
 
         // One route handles every category.
         // The label string is passed as arguments from HomeCategoryGrid.

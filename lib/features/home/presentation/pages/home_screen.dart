@@ -3,6 +3,7 @@ import 'package:flutter_product_detail_app/features/home/presentation/pages/noti
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/product_model.dart';
+import '../../../cart/presentation/page/cart.dart';
 import '../widgets/home_category_grid.dart';
 import '../widgets/section_header.dart';
 import '../widgets/horizontal_product_list.dart';
@@ -42,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _navIndex,
         children: [
           _buildHomePage(tt), // 0 = Home
-          const _CartPage(), // 1 = Cart (placeholder)
+          const CartScreen(), // 1 = Cart (placeholder)
           const OrderPage(), // 2 = Order
           const _InboxPage(), // 3 = Inbox (placeholder)
           const _ProfilePage(), // 4 = Profile (placeholder)
@@ -137,15 +138,6 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // ================= PLACEHOLDER PAGES =================
-
-class _CartPage extends StatelessWidget {
-  const _CartPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text("Cart Page")));
-  }
-}
 
 class _InboxPage extends StatelessWidget {
   const _InboxPage();

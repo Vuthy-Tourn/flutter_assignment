@@ -15,4 +15,14 @@ class AppColors {
   static const Color star = Color(0xFFFFC94A);
   static const Color reviewChipBackground = Color(0xFFE7F0FF);
   static const Color reviewChipText = Color(0xFF3673F5);
+
+  static const Color primaryLight = Color(0xFFFFE4EC);
+  static const Color success = Color(0xFF4CAF50);
+  static const Color successLight = Color(0xFFE8F5E9);
+
+  static const Color warning = Color(0xFFFFA726);
+  static const Color warningLight = Color(0xFFFFF3E0);
+
+  static const Color error = Color(0xFFFF5252);
+  static const Color errorLight = Color(0xFFFFEBEE);
 }

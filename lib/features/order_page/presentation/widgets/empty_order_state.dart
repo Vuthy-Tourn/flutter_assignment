@@ -21,7 +21,7 @@ class EmptyOrderState extends StatelessWidget {
             errorBuilder: (_, _, _) => Icon(
               Icons.shopping_bag_outlined,
               size: 72,
-              color: AppColors.primary,
+              color: AppColors.primaryLight,
             ),
           ),
 

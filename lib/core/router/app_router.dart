@@ -31,4 +31,7 @@ class AppRouter {
   // ONE route for all categories. Pass the display name as arguments:
   //   Navigator.pushNamed(context, AppRouter.category, arguments: 'Skincare')
   static const String category = '/category';
+  // ── Cart ──────────────────────────────────────────────────────────
+  // The Router for check payment products
+  static const String payment = '/payment';
 }

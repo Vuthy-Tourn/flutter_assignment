@@ -40,7 +40,7 @@ class ProductCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(color: AppColors.border),
           ),
           child: Column(
@@ -56,12 +56,12 @@ class ProductCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.secondary,
                       borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(16),
+                        top: Radius.circular(8),
                       ),
                     ),
                     child: ClipRRect(
                       borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(16),
+                        top: Radius.circular(8),
                       ),
                       child: product.imageUrl != null
                           ? Image.network(

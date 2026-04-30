@@ -5,6 +5,8 @@ class NotificationModel {
   final String imageUrl;
   final DateTime date;
   final bool isRead;
+  final String promotionId; 
+
 
   NotificationModel({
     required this.id,
@@ -13,5 +15,6 @@ class NotificationModel {
     required this.imageUrl,
     required this.date,
     this.isRead = false,
+    required this.promotionId,
   });
 }

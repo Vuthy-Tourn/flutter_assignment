@@ -1,22 +1,33 @@
-
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/notification_model.dart';
 import '../../../../data/constants/notification_constants.dart';
 import '../widgets/notification_cart.dart';
+import 'promotion_page.dart';
 
-
+// Pass the calling context so we can navigate after the sheet is popped
 void showNotificationSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => const NotificationSheet(),
+    builder: (_) => NotificationSheet(parentContext: context), // ← changed
   );
 }
 
 class NotificationSheet extends StatelessWidget {
-  const NotificationSheet({super.key});
+  final BuildContext parentContext; // ← new
+
+  const NotificationSheet({super.key, required this.parentContext});
+
+  // Close the sheet, then push PromotionPage using the parent context
+  void _goToPromotion() {
+    Navigator.pop(parentContext);
+    Navigator.push(
+      parentContext,
+      MaterialPageRoute(builder: (_) => const PromotionPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +96,10 @@ class NotificationSheet extends StatelessWidget {
               itemCount: _getGrouped().length,
               itemBuilder: (context, index) {
                 final group = _getGrouped()[index];
-                return _NotificationGroup(group: group);
+                return _NotificationGroup(
+                  group: group,
+                  onCardTap: _goToPromotion, // ← pass tap handler down
+                );
               },
             ),
           ),
@@ -132,8 +146,12 @@ class NotificationSheet extends StatelessWidget {
 // ══════════════════════════════════════════════════════════════════════════════
 class _NotificationGroup extends StatelessWidget {
   final Map<String, dynamic> group;
+  final VoidCallback onCardTap; // ← new
 
-  const _NotificationGroup({required this.group});
+  const _NotificationGroup({
+    required this.group,
+    required this.onCardTap, // ← new
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -153,13 +171,17 @@ class _NotificationGroup extends StatelessWidget {
             ),
           ),
         ),
-        ...notifications.map((n) => NotificationCard(notification: n)),
+        // Wrap each card with a tap → go to PromotionPage
+        ...notifications.map(
+          (n) => GestureDetector(
+            onTap: onCardTap,
+            child: NotificationCard(notification: n),
+          ),
+        ),
       ],
     );
   }
 }
-
-
 
 // ══════════════════════════════════════════════════════════════════════════════
 // Notification Icon Button (AppBar)

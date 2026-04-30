@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_product_detail_app/features/Auth/presentation/pages/login_page.dart';
-
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'data/demo/demo_product_detail.dart';
@@ -25,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       initialRoute: AppRouter.login,
       routes: {
-        AppRouter.login: (_) => const LoginPage(),
+        // AppRouter.login: (_) => const LoginPage(),
         AppRouter.home: (_) => const HomeScreen(),
         AppRouter.payment: (_) => const PaymentPage(),
 

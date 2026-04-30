@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/auth_shared_widgets.dart';
-import 'reset_password_page.dart';
-
+import 'create_new_password_page.dart';
 class VerifyCodePage extends StatefulWidget {
   /// The email address the OTP was sent to. Displayed in the subtitle.
   final String email;

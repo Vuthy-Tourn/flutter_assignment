@@ -72,6 +72,24 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Widget _socialButton(String iconPath) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.grey.shade200),
+        color: Colors.white,
+      ),
+      child: Image.asset(
+        iconPath,
+        height: 24,
+        width: 24,
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.help_outline, size: 24, color: Colors.grey),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
@@ -173,12 +191,54 @@ class _SignUpPageState extends State<SignUpPage> {
 
                 const SizedBox(height: 30),
 
+                // ── OR SIGN UP WITH ───────────────────────────────────────
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey.shade300,
+                        thickness: 0.5,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        'Or sign up with',
+                        style: tt.bodySmall?.copyWith(
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey.shade300,
+                        thickness: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // ── SOCIAL BUTTONS ────────────────────────────────────────
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _socialButton('assets/images/google_icon.png'),
+                    const SizedBox(width: 20),
+                    _socialButton('assets/images/facebook_icon.png'),
+                    const SizedBox(width: 20),
+                    _socialButton('assets/images/apple_icon.png'),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Already have an account? ', style: tt.bodyMedium),
                     GestureDetector(
-                      // Pop back to the login page that's already on the stack
                       onTap: () => Navigator.pop(context),
                       child: Text(
                         'Log In',

@@ -57,10 +57,28 @@ class _LoginPageState extends State<LoginPage> {
     if (!mounted) return;
     setState(() => _isLoading = false);
     Navigator.pushNamedAndRemoveUntil(
-  context,
-  AppRouter.home,
-  (route) => false,
-);
+      context,
+      AppRouter.home,
+      (route) => false,
+    );
+  }
+
+  Widget _socialButton(String iconPath) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.grey.shade200),
+        color: Colors.white,
+      ),
+      child: Image.asset(
+        iconPath,
+        height: 24,
+        width: 24,
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.help_outline, size: 24, color: Colors.grey),
+      ),
+    );
   }
 
   @override
@@ -163,7 +181,50 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: _isLoading ? null : _handleLogin,
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 30),
+
+                // ── OR LOGIN WITH ─────────────────────────────────────────
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey.shade300,
+                        thickness: 0.5,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        'Or login with',
+                        style: tt.bodySmall?.copyWith(
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey.shade300,
+                        thickness: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // ── SOCIAL BUTTONS ────────────────────────────────────────
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _socialButton('assets/images/google_icon.png'),
+                    const SizedBox(width: 20),
+                    _socialButton('assets/images/facebook_icon.png'),
+                    const SizedBox(width: 20),
+                    _socialButton('assets/images/apple_icon.png'),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_product_detail_app/features/home/presentation/pages/notification_screen.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import 'package:flutter_product_detail_app/features/ui_search/search_page.dart';
+
 import '../../../../data/models/product_model.dart';
 import '../../../../data/constants/promotion_constants.dart';
 import '../../../cart/presentation/page/cart.dart';
@@ -77,10 +79,16 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           NotificationIconButton(count: 4),
           IconButton(
-            icon: const Icon(Icons.search_outlined),
-            color: AppColors.secondary,
-            onPressed: () => Navigator.pushNamed(context, AppRouter.search),
-          ),
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchScreen(),
+                ),
+              );
+            },
+          )
         ],
       ),
       body: SingleChildScrollView(

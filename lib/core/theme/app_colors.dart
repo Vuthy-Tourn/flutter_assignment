@@ -14,6 +14,7 @@ class AppColors {
   static const Color divider = Color(0xFFF2E9ED);
   static const Color star = Color(0xFFFFC94A);
   static const Color reviewChipBackground = Color(0xFFE7F0FF);
+  static const Color Background = Color(0xFFBDCDDC);
   static const Color reviewChipText = Color(0xFF3673F5);
 
   static const Color primaryLight = Color(0xFFFFE4EC);

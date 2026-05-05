@@ -1,13 +1,16 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'data/demo/demo_product_detail.dart';
-
-// Import your page files
+// import 'features/splash/presentation/pages/splash_screen.dart';
 import 'features/home/presentation/pages/home_screen.dart';
 import 'features/home/presentation/pages/category_page.dart';
-import 'features/product_detail/presentation/pages/product_detail_page.dart';
 import 'features/auth/presentation/pages/login_page.dart';
+import 'features/auth/presentation/pages/sign_up_page.dart';
+// import 'features/inbox/presentation/pages/inbox_screen.dart';
+import 'features/product_detail/presentation/pages/product_detail_page.dart';
+import 'features/profile/presentation/pages/profile_page.dart';
 import 'features/ui_search/splash_page.dart';
 
 void main() {
@@ -23,25 +26,20 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Eternal Shine',
       theme: AppTheme.lightTheme,
-
-      // 1. Start the app at the Splash Screen
       initialRoute: AppRouter.splash,
-
       routes: {
-        // 2. Map Splash to your SplashScreen class
         AppRouter.splash: (_) => const SplashScreen(),
-
-        // 3. Map Onboarding (Ensure this class exists in splash_page.dart)
-        AppRouter.onboarding: (_) => const OnboardingScreen(),
-
-        // 4. Map Login and Home
         AppRouter.login: (_) => const LoginPage(),
+        AppRouter.signUp: (_) => const SignUpPage(),
         AppRouter.home: (_) => const HomeScreen(),
-
-        // 5. Map remaining routes
         AppRouter.category: (_) => const CategoryPage(),
+        // AppRouter.inbox: (_) => const InboxScreen(),
         AppRouter.productDetail: (_) =>
             ProductDetailPage(product: DemoProductDetail.product),
+        // AppRouter.cart:    (_) => const CartScreen(),
+        // AppRouter.order:   (_) => const OrderScreen(),
+        AppRouter.profile: (_) => const ProfilePage(),
+        // AppRouter.search:  (_) => const SearchScreen(),
       },
     );
   }

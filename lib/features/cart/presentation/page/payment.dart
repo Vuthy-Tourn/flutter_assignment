@@ -205,7 +205,7 @@ class PaymentPage extends StatelessWidget {
               width: 70,
               height: 70,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 color: Colors.pink[50],
                 width: 70,
                 height: 70,

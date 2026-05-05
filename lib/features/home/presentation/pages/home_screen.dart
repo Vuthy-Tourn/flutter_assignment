@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_product_detail_app/features/home/presentation/pages/notification_screen.dart';
-import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:flutter_product_detail_app/features/ui_search/search_page.dart';
 
 import '../../../../data/models/product_model.dart';
 import '../../../../data/constants/promotion_constants.dart';
 import '../../../cart/presentation/page/cart.dart';
+import '../../../profile/presentation/pages/profile_page.dart';
 import '../widgets/home_category_grid.dart';
 import '../widgets/section_header.dart';
 import '../widgets/horizontal_product_list.dart';
@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const CartScreen(),
           const OrderPage(),
           const _InboxPage(),
-          const _ProfilePage(),
+          const ProfilePage(),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Image.asset(
           'assets/images/app_logo.png',
           height: 34,
-          errorBuilder: (_, __, ___) => Text(
+          errorBuilder: (_, _, _) => Text(
             'GlowUp',
             style: tt.titleLarge?.copyWith(color: AppColors.primary),
           ),
@@ -175,9 +175,4 @@ class _InboxPage extends StatelessWidget {
       const Scaffold(body: Center(child: Text('Inbox Page')));
 }
 
-class _ProfilePage extends StatelessWidget {
-  const _ProfilePage();
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('Profile Page')));
-}
+

@@ -153,7 +153,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 Navigator.pop(context);
               } else {
                 // Optional: Handle what happens if there is no back page
-                print("No pages to pop");
               }
             },
             child: const Icon(

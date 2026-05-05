@@ -55,7 +55,7 @@ class PromotionCard extends StatelessWidget {
                 height: 120,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+                errorBuilder: (_, _, _) => Container(
                   height: 120,
                   color: AppColors.divider,
                   child: const Icon(
@@ -129,7 +129,7 @@ class PromotionCard extends StatelessWidget {
                 width: 110,
                 height: 110,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+                errorBuilder: (_, _, _) => Container(
                   width: 110,
                   height: 110,
                   color: AppColors.divider,

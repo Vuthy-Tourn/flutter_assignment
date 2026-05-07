@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/profile_data.dart';
 
 class _NavItem {
   final IconData icon;
@@ -36,12 +39,10 @@ class BottomNavBar extends StatelessWidget {
       clipBehavior: Clip.none,
       child: Container(
         width: double.infinity,
-        // Shorter bar — only top border, zero shadow
         padding: EdgeInsets.fromLTRB(6, 4, 6, 4 + bottomInset),
         decoration: const BoxDecoration(
           color: AppColors.surface,
           border: Border(top: BorderSide(color: AppColors.border, width: 1)),
-          // No boxShadow at all
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -51,6 +52,7 @@ class BottomNavBar extends StatelessWidget {
               item: _kItems[i],
               isActive: currentIndex == i,
               badge: i == 1 && cartCount > 0 ? cartCount : null,
+              isProfileTab: i == 4, // ← flag the profile tab
               onTap: () => onTap(i),
             );
           }),
@@ -60,10 +62,13 @@ class BottomNavBar extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _NavTile extends StatefulWidget {
   final _NavItem item;
   final bool isActive;
   final int? badge;
+  final bool isProfileTab;
   final VoidCallback onTap;
 
   const _NavTile({
@@ -71,6 +76,7 @@ class _NavTile extends StatefulWidget {
     required this.isActive,
     required this.onTap,
     this.badge,
+    this.isProfileTab = false,
   });
 
   @override
@@ -117,14 +123,8 @@ class _NavTileState extends State<_NavTile>
           final double iconScale = _iconScaleFor(_ctrl.value);
           final double circleFill = Curves.easeOutCubic.transform(_ctrl.value);
 
-          // Icon is white on top of the circle when active,
-          // textSecondary when inactive (no circle)
           final Color iconColor = circleFill > 0
-              ? Color.lerp(
-                  const Color.fromARGB(255, 255, 255, 255),
-                  AppColors.surface,
-                  circleFill,
-                )!
+              ? Color.lerp(Colors.white, AppColors.surface, circleFill)!
               : AppColors.textSecondary;
 
           return SizedBox(
@@ -133,7 +133,7 @@ class _NavTileState extends State<_NavTile>
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // ── Icon — lifts only when active ─────────────────
+                // ── Icon area ──────────────────────────────────────
                 Transform.translate(
                   offset: Offset(0, -12 * circleFill),
                   child: Transform.scale(
@@ -142,25 +142,42 @@ class _NavTileState extends State<_NavTile>
                       clipBehavior: Clip.none,
                       alignment: Alignment.center,
                       children: [
-                        // Circle ONLY rendered when animating/active
-                        if (circleFill > 0)
+                        // Pink circle (active state) — hidden when avatar image is set
+                        if (circleFill > 0 &&
+                            !(widget.isProfileTab &&
+                                ProfileData.instance.avatarBytes != null))
                           Container(
                             width: 46,
                             height: 46,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: AppColors.primary,
-                              // No shadow
                             ),
                           ),
 
-                        Icon(
-                          widget.isActive
-                              ? widget.item.activeIcon
-                              : widget.item.icon,
-                          size: 24,
-                          color: iconColor,
-                        ),
+                        // ── Profile tab: live avatar ───────────────
+                        if (widget.isProfileTab)
+                          ListenableBuilder(
+                            listenable: ProfileData.instance,
+                            builder: (_, _) {
+                              final bytes = ProfileData.instance.avatarBytes;
+                              return _AvatarIcon(
+                                bytes: bytes,
+                                isActive: widget.isActive,
+                                circleFill: circleFill,
+                                iconColor: iconColor,
+                              );
+                            },
+                          )
+                        else
+                          // ── Normal tab: plain icon ─────────────
+                          Icon(
+                            widget.isActive
+                                ? widget.item.activeIcon
+                                : widget.item.icon,
+                            size: 24,
+                            color: iconColor,
+                          ),
 
                         // Badge
                         if (widget.badge != null)
@@ -196,7 +213,7 @@ class _NavTileState extends State<_NavTile>
 
                 const SizedBox(height: 2),
 
-                // ── Label ─────────────────────────────────────────
+                // Label
                 Text(
                   widget.item.label,
                   style: tt.bodyMedium?.copyWith(
@@ -217,16 +234,55 @@ class _NavTileState extends State<_NavTile>
     );
   }
 
-  /// Peak 1.55 → settles at 1.12 when active
   static double _iconScaleFor(double t) {
     if (t <= 0.35) {
-      final seg = t / 0.35;
-      final eased = Curves.easeOut.transform(seg);
+      final eased = Curves.easeOut.transform(t / 0.35);
       return 1.0 + eased * 0.55;
     } else {
-      final seg = (t - 0.35) / 0.65;
-      final eased = Curves.elasticOut.transform(seg);
+      final eased = Curves.elasticOut.transform((t - 0.35) / 0.65);
       return 1.55 - eased * 0.43;
     }
+  }
+}
+
+// ── Avatar icon rendered inside the nav tile ──────────────────────────────────
+class _AvatarIcon extends StatelessWidget {
+  final Uint8List? bytes;
+  final bool isActive;
+  final double circleFill;
+  final Color iconColor;
+
+  const _AvatarIcon({
+    required this.bytes,
+    required this.isActive,
+    required this.circleFill,
+    required this.iconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // No custom image — fall back to plain person icon
+    if (bytes == null) {
+      return Icon(
+        isActive ? Icons.person_rounded : Icons.person_outline_rounded,
+        size: 24,
+        color: iconColor,
+      );
+    }
+
+    // Has image — fill the entire 46px circle used by the active pip,
+    // so the photo replaces the icon completely (no pink circle behind it).
+    return Container(
+      width: 46,
+      height: 46,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: isActive ? AppColors.primary : AppColors.border,
+          width: 2.5,
+        ),
+      ),
+      child: ClipOval(child: Image.memory(bytes!, fit: BoxFit.cover)),
+    );
   }
 }

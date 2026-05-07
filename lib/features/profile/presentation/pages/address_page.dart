@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../data/models/address_data.dart'; // ← adjust path
+import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/address_data.dart';
 import 'map_page.dart';
 
 class AddressPage extends StatelessWidget {
@@ -8,14 +9,14 @@ class AddressPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFCFD),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFCFD),
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
             Icons.chevron_left,
-            color: Color(0xFFFF79A2),
+            color: AppColors.primary,
             size: 28,
           ),
           onPressed: () => Navigator.pop(context),
@@ -26,13 +27,12 @@ class AddressPage extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF2B2B2B),
+            color: AppColors.textPrimary,
           ),
         ),
         actions: [
-          // Add new address button
           IconButton(
-            icon: const Icon(Icons.add, color: Color(0xFFFF79A2)),
+            icon: const Icon(Icons.add, color: AppColors.primary),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const MapPage()),
@@ -57,25 +57,25 @@ class AddressPage extends StatelessWidget {
           return ListView.separated(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
             itemCount: entries.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (context, i) => _AddressCard(entry: entries[i]),
           );
         },
       ),
-
-      // FAB to add another address
       floatingActionButton: ListenableBuilder(
         listenable: AddressData.instance,
         builder: (context, _) {
-          if (AddressData.instance.entries.isEmpty)
+          if (AddressData.instance.entries.isEmpty) {
             return const SizedBox.shrink();
+          }
+
           return FloatingActionButton.extended(
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const MapPage()),
             ),
-            backgroundColor: const Color(0xFFFF79A2),
-            foregroundColor: Colors.white,
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.surface,
             elevation: 2,
             icon: const Icon(Icons.add_location_alt_outlined),
             label: const Text(
@@ -88,8 +88,6 @@ class AddressPage extends StatelessWidget {
     );
   }
 }
-
-// ── Address card ──────────────────────────────────────────────────────────────
 
 class _AddressCard extends StatelessWidget {
   final AddressEntry entry;
@@ -110,21 +108,12 @@ class _AddressCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: entry.isDefault
-              ? const Color(0xFFFF79A2)
-              : const Color(0xFFF2E9ED),
+          color: entry.isDefault ? AppColors.primary : AppColors.divider,
           width: entry.isDefault ? 1.5 : 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.fromLTRB(16, 10, 8, 10),
@@ -133,15 +122,15 @@ class _AddressCard extends StatelessWidget {
           height: 40,
           decoration: BoxDecoration(
             color: entry.isDefault
-                ? const Color(0xFFFFEEF4)
-                : const Color(0xFFFAF5F7),
+                ? AppColors.primaryLight   // solid light pink
+                : AppColors.background,    // solid off-white
             shape: BoxShape.circle,
           ),
           child: Icon(
             _labelIcon,
             color: entry.isDefault
-                ? const Color(0xFFFF79A2)
-                : const Color(0xFF7D7D7D),
+                ? AppColors.primary
+                : AppColors.textSecondary,
             size: 20,
           ),
         ),
@@ -152,7 +141,7 @@ class _AddressCard extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF2B2B2B),
+                color: AppColors.textPrimary,
               ),
             ),
             if (entry.isDefault) ...[
@@ -160,7 +149,7 @@ class _AddressCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFEEF4),
+                  color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text(
@@ -168,7 +157,7 @@ class _AddressCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFFFF79A2),
+                    color: AppColors.primary,
                   ),
                 ),
               ),
@@ -179,16 +168,20 @@ class _AddressCard extends StatelessWidget {
           padding: const EdgeInsets.only(top: 4),
           child: Text(
             entry.address,
-            style: const TextStyle(fontSize: 12, color: Color(0xFF7D7D7D)),
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ),
         trailing: PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert, color: Color(0xFF7D7D7D), size: 20),
+          icon: const Icon(Icons.more_vert, color: AppColors.textSecondary, size: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          color: AppColors.surface,
           onSelected: (value) {
             if (value == 'default') {
               AddressData.instance.setDefault(entry.id);
@@ -202,13 +195,10 @@ class _AddressCard extends StatelessWidget {
                 value: 'default',
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.star_outline,
-                      size: 18,
-                      color: Color(0xFFFF79A2),
-                    ),
+                    Icon(Icons.star_outline, size: 18, color: AppColors.primary),
                     SizedBox(width: 10),
-                    Text('Set as default'),
+                    Text('Set as default',
+                        style: TextStyle(color: AppColors.textPrimary)),
                   ],
                 ),
               ),
@@ -216,13 +206,9 @@ class _AddressCard extends StatelessWidget {
               value: 'delete',
               child: Row(
                 children: [
-                  Icon(
-                    Icons.delete_outline,
-                    size: 18,
-                    color: Color(0xFFFF2160),
-                  ),
+                  Icon(Icons.delete_outline, size: 18, color: AppColors.accent),
                   SizedBox(width: 10),
-                  Text('Delete', style: TextStyle(color: Color(0xFFFF2160))),
+                  Text('Delete', style: TextStyle(color: AppColors.accent)),
                 ],
               ),
             ),

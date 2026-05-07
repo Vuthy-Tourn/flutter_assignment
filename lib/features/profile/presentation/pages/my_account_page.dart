@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/profile_data.dart';
 import '../widgets/profile_avatar.dart';
 import 'edit_profile_page.dart';
@@ -9,14 +10,14 @@ class MyAccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFCFD),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFCFD),
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
             Icons.chevron_left,
-            color: Color(0xFFFF79A2),
+            color: AppColors.primary,
             size: 28,
           ),
           onPressed: () => Navigator.pop(context),
@@ -27,7 +28,7 @@ class MyAccountPage extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF2B2B2B),
+            color: AppColors.textPrimary,
           ),
         ),
         actions: [
@@ -39,7 +40,7 @@ class MyAccountPage extends StatelessWidget {
             child: const Text(
               'Edit',
               style: TextStyle(
-                color: Color(0xFFFF79A2),
+                color: AppColors.primary,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -55,19 +56,14 @@ class MyAccountPage extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-
-                // ── Avatar (read-only view, no edit badge) ─────────────
                 const Center(child: ProfileAvatar(size: 72)),
-
                 const SizedBox(height: 28),
-
                 _ProfileInfoRow(label: 'First Name', value: p.firstName),
                 _ProfileInfoRow(label: 'Last Name', value: p.lastName),
                 _ProfileInfoRow(label: 'Gender', value: p.gender),
                 _PhoneInfoRow(value: p.phone),
                 _ProfileInfoRow(label: 'Email', value: p.email),
                 _ProfileInfoRow(label: 'Birthday', value: p.birthday),
-
                 const SizedBox(height: 32),
               ],
             ),
@@ -77,8 +73,6 @@ class MyAccountPage extends StatelessWidget {
     );
   }
 }
-
-// ── Private row widgets ───────────────────────────────────────────────────────
 
 class _ProfileInfoRow extends StatelessWidget {
   final String label;
@@ -96,14 +90,17 @@ class _ProfileInfoRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(fontSize: 14, color: Color(0xFF7D7D7D)),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                ),
               ),
               Text(
                 value,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF2B2B2B),
+                  color: AppColors.textPrimary,
                 ),
               ),
             ],
@@ -111,7 +108,7 @@ class _ProfileInfoRow extends StatelessWidget {
         ),
         const Divider(
           height: 1,
-          color: Color(0xFFF2E9ED),
+          color: AppColors.divider,
           indent: 20,
           endIndent: 20,
         ),
@@ -140,7 +137,7 @@ class _PhoneInfoRow extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF2B2B2B),
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),
@@ -149,7 +146,7 @@ class _PhoneInfoRow extends StatelessWidget {
         ),
         const Divider(
           height: 1,
-          color: Color(0xFFF2E9ED),
+          color: AppColors.divider,
           indent: 20,
           endIndent: 20,
         ),

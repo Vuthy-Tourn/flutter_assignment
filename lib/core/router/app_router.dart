@@ -1,26 +1,29 @@
+
+// lib/core/router/app_router.dart
 class AppRouter {
   AppRouter._();
 
-  // ── Auth ─────────────────────────────────────────
+  // ── Auth ──────────────────────────────────────────────────────────────
   static const String splash = '/splash';
-  static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String signUp = '/sign-up';
 
-  // ── Main navigation ──────────────────────────────
+  // ── Main navigation ───────────────────────────────────────────────────
   static const String home = '/';
   static const String search = '/search';
   static const String cart = '/cart';
   static const String inbox = '/inbox';
   static const String profile = '/profile';
 
-  // ── Product ──────────────────────────────────────
+  // ── Product ───────────────────────────────────────────────────────────
   static const String productDetail = '/product-detail';
   static const String order = '/order';
 
-  // ── Category ─────────────────────────────────────
+  // ── Category ──────────────────────────────────────────────────────────
   static const String category = '/category';
 
-  // ── Payment ──────────────────────────────────────
+  // ── Cart → Payment ────────────────────────────────────────────────────
+  // Receives List<Map<String,dynamic>> as arguments from CartScreen:
+  //   Navigator.pushNamed(context, AppRouter.payment, arguments: selectedItems)
   static const String payment = '/payment';
 }

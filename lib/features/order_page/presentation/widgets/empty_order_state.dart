@@ -13,9 +13,8 @@ class EmptyOrderState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Illustration placeholder — swap with your real asset
           Image.asset(
-            'assets/images/empty_order.png',
+            'assets/images/empty.png',
             width: 100,
             height: 100,
             errorBuilder: (_, _, _) => Icon(
@@ -29,9 +28,7 @@ class EmptyOrderState extends StatelessWidget {
 
           Text(
             "There's no recent activity to show here.",
-            style: tt.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: tt.bodySmall?.copyWith(color: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
         ],

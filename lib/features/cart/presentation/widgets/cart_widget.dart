@@ -34,10 +34,7 @@ class CartItemCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            blurRadius: 8,
-            color: Colors.grey.withOpacity(0.1),
-          )
+          BoxShadow(blurRadius: 8, color: Colors.grey.shade200, offset: const Offset(0, 4)),
         ],
       ),
       child: Row(
@@ -66,9 +63,13 @@ class CartItemCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
 
                 const SizedBox(height: 4),
 
@@ -121,12 +122,12 @@ class CartItemCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

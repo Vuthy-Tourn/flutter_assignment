@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class ProfileSectionTitle extends StatelessWidget {
   final String title;
@@ -11,10 +12,10 @@ class ProfileSectionTitle extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF2B2B2B),
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+          color: AppColors.textSecondary, // solid muted text
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.4,
         ),
       ),
     );

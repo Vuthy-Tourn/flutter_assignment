@@ -441,126 +441,145 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  void _showSelectionSheet(BuildContext context, String title, List<String> items) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setModalState) {
-              return FractionallySizedBox(
-                heightFactor: 0.9,
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                      ),
-                      const SizedBox(height: 24),
-                      Expanded(
-                        child: ListView.separated(
-                          itemCount: items.length,
-                          separatorBuilder: (context, index) => const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            final item = items[index];
-                            final isCurrentlySelected = title == 'Brand'
-                                ? _selectedBrand == item
-                                : _selectedProductType == item;
+  // Only the _showSelectionSheet method needs fixing.
+// Replace your existing _showSelectionSheet with this version:
 
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.background,
-                                border: Border.all(color: AppColors.border),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: CheckboxListTile(
-                                title: Text(
-                                  item,
-                                  style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
-                                ),
-                                value: isCurrentlySelected,
-                                onChanged: (bool? value) {
-                                  setModalState(() {
-                                    setState(() {
-                                      if (title == 'Brand') {
-                                        _selectedBrand = item;
-                                      } else {
-                                        _selectedProductType = item;
-                                      }
-                                    });
-                                  });
-                                },
-                                controlAffinity: ListTileControlAffinity.trailing,
-                                activeColor: AppColors.primary,
-                                checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                side: const BorderSide(color: AppColors.border),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                              ),
-                            );
-                          },
+void _showSelectionSheet(BuildContext context, String title, List<String> items) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (ctx) {
+      return StatefulBuilder(
+        builder: (BuildContext ctx, StateSetter setModalState) {
+          return FractionallySizedBox(
+            heightFactor: 0.9,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2B2B2B)),
+                  ),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: ListView.separated(
+                      itemCount: items.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (_, index) {
+                        final item = items[index];
+                        final isCurrentlySelected = title == 'Brand'
+                            ? _selectedBrand == item
+                            : _selectedProductType == item;
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFFCFD),
+                            border: Border.all(color: const Color(0xFFE9DCE1)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: CheckboxListTile(
+                            title: Text(item,
+                                style: const TextStyle(
+                                    fontSize: 16, color: Color(0xFF2B2B2B))),
+                            value: isCurrentlySelected,
+                            onChanged: (bool? value) {
+                              setModalState(() {
+                                setState(() {
+                                  if (title == 'Brand') {
+                                    _selectedBrand = item;
+                                  } else {
+                                    _selectedProductType = item;
+                                  }
+                                });
+                              });
+                            },
+                            controlAffinity:
+                                ListTileControlAffinity.trailing,
+                            activeColor: const Color(0xFFFF79A2),
+                            checkboxShape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4)),
+                            side: const BorderSide(
+                                color: Color(0xFFE9DCE1)),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 16),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 52,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                  color: Color(0xFFE9DCE1)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                if (title == 'Brand') {
+                                  _selectedBrand = '';
+                                } else {
+                                  _selectedProductType = '';
+                                }
+                              });
+                              Navigator.pop(ctx);
+                            },
+                            child: const Text('Clear',
+                                style: TextStyle(
+                                    color: Color(0xFF2B2B2B),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600)),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 52,
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(color: AppColors.border),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    if (title == 'Brand') _selectedBrand = '';
-                                    else _selectedProductType = '';
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  'Clear',
-                                  style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600),
-                                ),
-                              ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: SizedBox(
+                          height: 52,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFF79A2),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
                             ),
+                            onPressed: () => Navigator.pop(ctx),
+                            child: const Text('Confirm',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600)),
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: SizedBox(
-                              height: 52,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                ),
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text(
-                                  'Confirm',
-                                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 20),
                     ],
                   ),
-                ),
-              );
-            }
-        );
-      },
-    ).then((_) {
-      _showMainFilterSheet(context);
-    });
-  }
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  ).then((_) {
+    // ✅ Fixed: guard context use after async .then()
+    if (!context.mounted) return;
+    _showMainFilterSheet(context);
+  });
+}
 }

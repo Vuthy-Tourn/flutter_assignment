@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_product_detail_app/core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../home/presentation/pages/notification_screen.dart';
-import '../widgets/order_filter_tabs.dart';
 import '../widgets/order_card.dart';
 import '../widgets/empty_order_state.dart';
 
-enum OrderFilter { all, processing, orderFailed, successful }
+enum OrderFilter { all, orderFailed, processing, successful }
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
@@ -17,9 +16,8 @@ class OrderPage extends StatefulWidget {
 }
 
 class _OrderPageState extends State<OrderPage> {
-  OrderFilter _selectedFilter = OrderFilter.all;
+  OrderFilter _selected = OrderFilter.all;
 
-  // Demo order data
   final List<Map<String, dynamic>> _allOrders = [
     {
       'id': 'ORD-001',
@@ -29,7 +27,8 @@ class _OrderPageState extends State<OrderPage> {
       'brand': 'Innisfree',
       'price': 18.70,
       'quantity': 2,
-      'image': 'assets/images/option1',
+      'image':
+          'https://i.pinimg.com/1200x/6b/d1/a5/6bd1a5ceaac536db2c7fc0f5c4a53921.jpg',
       'hasDeliveryBadge': false,
     },
     {
@@ -40,7 +39,8 @@ class _OrderPageState extends State<OrderPage> {
       'brand': 'Innisfree',
       'price': 10.00,
       'quantity': 1,
-      'image': 'assets/images/sunscreen_yellow.png',
+      'image':
+          'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=200&q=80',
       'hasDeliveryBadge': false,
     },
     {
@@ -51,30 +51,35 @@ class _OrderPageState extends State<OrderPage> {
       'brand': 'Innisfree',
       'price': 10.00,
       'quantity': 2,
-      'image': 'assets/images/sunscreen_pink.png',
+      'image':
+          'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=200&q=80',
       'hasDeliveryBadge': true,
     },
   ];
 
-  List<Map<String, dynamic>> get _filteredOrders {
-    if (_selectedFilter == OrderFilter.all) return _allOrders;
-    return _allOrders
-        .where((o) => o['status'] == _selectedFilter)
-        .toList();
+  static const _tabs = [
+    (OrderFilter.all, 'All'),
+    (OrderFilter.orderFailed, 'Order Failed'),
+    (OrderFilter.processing, 'Processing'),
+    (OrderFilter.successful, 'Successful'),
+  ];
+
+  List<Map<String, dynamic>> get _filtered {
+    if (_selected == OrderFilter.all) return _allOrders;
+    return _allOrders.where((o) => o['status'] == _selected).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    final filtered = _filteredOrders;
+    final orders = _filtered;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        scrolledUnderElevation: 1,
-        shadowColor: AppColors.border,
+        scrolledUnderElevation: 0,
         centerTitle: true,
         title: Image.asset(
           'assets/images/app_logo.png',
@@ -91,7 +96,6 @@ class _OrderPageState extends State<OrderPage> {
         ),
         actions: [
           NotificationIconButton(count: 4),
-
           IconButton(
             icon: const Icon(Icons.search_outlined),
             color: AppColors.secondary,
@@ -102,39 +106,77 @@ class _OrderPageState extends State<OrderPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
+          // ── Page title ────────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 14),
             child: Text(
               'My Order',
               style: tt.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary,
+                fontSize: 20,
               ),
             ),
           ),
 
-          // Filter tabs
-          OrderFilterTabs(
-            selected: _selectedFilter,
-            onSelected: (f) => setState(() => _selectedFilter = f),
+          // ── Pill filter chips ─────────────────────────────────────────────
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: _tabs.map((tab) {
+                final isSelected = _selected == tab.$1;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: GestureDetector(
+                    onTap: () => setState(() => _selected = tab.$1),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.primary
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: isSelected
+                              ? AppColors.primary
+                              : const Color(0xFFD6D6D6),
+                          width: 1.2,
+                        ),
+                      ),
+                      child: Text(
+                        tab.$2,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 14),
 
-          // Order list or empty state
+          // ── Order list / empty state ──────────────────────────────────────
           Expanded(
-            child: filtered.isEmpty
+            child: orders.isEmpty
                 ? const EmptyOrderState()
                 : ListView.separated(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-              itemCount: filtered.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                final order = filtered[index];
-                return OrderCard(order: order);
-              },
-            ),
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                    itemCount: orders.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                    itemBuilder: (_, i) => OrderCard(order: orders[i]),
+                  ),
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class AboutUsPage extends StatelessWidget {
   const AboutUsPage({super.key});
@@ -14,14 +15,14 @@ class AboutUsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFCFD),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFCFD),
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
             Icons.chevron_left,
-            color: Color(0xFFFF79A2),
+            color: AppColors.primary,
             size: 28,
           ),
           onPressed: () => Navigator.pop(context),
@@ -32,7 +33,7 @@ class AboutUsPage extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF2B2B2B),
+            color: AppColors.textPrimary,
           ),
         ),
       ),
@@ -42,9 +43,7 @@ class AboutUsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 24),
-
-            // Logo
-            Center(
+            const Center(
               child: Column(
                 children: [
                   Text(
@@ -52,7 +51,7 @@ class AboutUsPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFFFF79A2),
+                      color: AppColors.primary,
                       height: 1.1,
                     ),
                   ),
@@ -61,60 +60,50 @@ class AboutUsPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFFFF79A2),
+                      color: AppColors.primary,
                       height: 1.1,
                     ),
                   ),
                 ],
               ),
             ),
-
             const SizedBox(height: 24),
-
             const Text(
               'Welcome to our cosmetic app, your go-to destination for beauty and self-care. We are dedicated to helping you discover high-quality skincare and makeup products that suit your unique style and needs.',
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF2B2B2B),
+                color: AppColors.textPrimary,
                 height: 1.6,
               ),
             ),
-
             const SizedBox(height: 14),
-
             const Text(
               'Our mission is to make beauty simple, accessible, and enjoyable for everyone. From trending products to trusted essentials, we carefully curate items to ensure you get the best experience.',
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF2B2B2B),
+                color: AppColors.textPrimary,
                 height: 1.6,
               ),
             ),
-
             const SizedBox(height: 14),
-
             const Text(
               'With easy browsing, personalized recommendations, and secure shopping, we aim to bring confidence and convenience right to your fingertips.',
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF2B2B2B),
+                color: AppColors.textPrimary,
                 height: 1.6,
               ),
             ),
-
             const SizedBox(height: 24),
-
             const Text(
               'Find us on',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF2B2B2B),
+                color: AppColors.textPrimary,
               ),
             ),
-
             const SizedBox(height: 10),
-
             _ContactRow(
               icon: Icons.language,
               label: 'Website: ',
@@ -139,19 +128,16 @@ class AboutUsPage extends StatelessWidget {
               url: 'https://maps.google.com/?q=western+university+Location',
               onTap: _launchUrl,
             ),
-
             const SizedBox(height: 16),
-
             const Text(
               'Social Media',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF2B2B2B),
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
-
             _SocialRow(
               platform: 'Instagram',
               url: 'https://instagram.com/external-shine',
@@ -163,7 +149,6 @@ class AboutUsPage extends StatelessWidget {
               url: 'https://tiktok.com/@external-shine',
               onTap: _launchUrl,
             ),
-
             const SizedBox(height: 40),
           ],
         ),
@@ -194,7 +179,7 @@ class _ContactRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF7D7D7D)),
+          Icon(icon, size: 16, color: AppColors.textSecondary),
           const SizedBox(width: 6),
           Expanded(
             child: RichText(
@@ -204,14 +189,14 @@ class _ContactRow extends StatelessWidget {
                     text: label,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: Color(0xFF2B2B2B),
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   TextSpan(
                     text: linkText,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: Color(0xFF3673F5),
+                      color: AppColors.reviewChipText,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -244,18 +229,18 @@ class _SocialRow extends StatelessWidget {
         children: [
           const Text(
             '• ',
-            style: TextStyle(fontSize: 14, color: Color(0xFF2B2B2B)),
+            style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
           ),
           Text(
             '$platform: ',
-            style: const TextStyle(fontSize: 13, color: Color(0xFF2B2B2B)),
+            style: const TextStyle(fontSize: 13, color: AppColors.textPrimary),
           ),
           Expanded(
             child: Text(
               url,
               style: const TextStyle(
                 fontSize: 13,
-                color: Color(0xFF3673F5),
+                color: AppColors.reviewChipText,
                 decoration: TextDecoration.underline,
               ),
               overflow: TextOverflow.ellipsis,

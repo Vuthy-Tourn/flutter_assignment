@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../data/models/profile_data.dart'; // adjust path
+import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/profile_data.dart';
 
-/// Reusable avatar widget that reads [ProfileData.avatarBytes].
-/// Set [size] for the circle diameter.
-/// Set [showEditBadge] to overlay the pink pencil button.
-/// Set [onEditTap] to handle the badge tap (e.g. open image picker).
 class ProfileAvatar extends StatelessWidget {
   final double size;
   final bool showEditBadge;
@@ -28,17 +25,17 @@ class ProfileAvatar extends StatelessWidget {
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFFFF79A2), width: 2),
-            color: const Color(0xFF2B2B2B),
+            border: Border.all(color: AppColors.primary, width: 2),
+            color: AppColors.textPrimary,
           ),
           child: ClipOval(
             child: bytes != null
                 ? Image.memory(bytes, fit: BoxFit.cover)
                 : Container(
-                    color: const Color(0xFF2B2B2B),
+                    color: AppColors.textPrimary,
                     child: Icon(
                       Icons.person,
-                      color: Colors.white,
+                      color: AppColors.surface,
                       size: size * 0.55,
                     ),
                   ),
@@ -60,12 +57,12 @@ class ProfileAvatar extends StatelessWidget {
                   width: badgeSize,
                   height: badgeSize,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFFF79A2),
+                    color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.edit,
-                    color: Colors.white,
+                    color: AppColors.surface,
                     size: badgeSize * 0.55,
                   ),
                 ),

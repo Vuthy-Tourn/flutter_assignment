@@ -39,7 +39,6 @@ class PromotionPage extends StatelessWidget {
             compact: false,
             // Each card could navigate to a deeper detail page in the future
             onTap: () {
-              // TODO: Navigator.push to PromotionDetailPage(promotion: promo)
             },
           );
         },

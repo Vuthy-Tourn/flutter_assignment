@@ -1,86 +1,76 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class ProfileMenuItem extends StatelessWidget {
   final IconData icon;
   final String label;
-  final VoidCallback onTap;
-  final Widget? trailing;
+  final VoidCallback? onTap;
   final Color? labelColor;
   final Color? iconColor;
   final bool showArrow;
+  final Widget? trailing;
 
   const ProfileMenuItem({
     super.key,
     required this.icon,
     required this.label,
-    required this.onTap,
-    this.trailing,
+    this.onTap,
     this.labelColor,
     this.iconColor,
     this.showArrow = true,
+    this.trailing,
   });
 
   @override
   Widget build(BuildContext context) {
-    final Color resolvedIconColor = iconColor ?? const Color(0xFFFF79A2);
-    final Color resolvedLabelColor = labelColor ?? const Color(0xFF2B2B2B);
+    final resolvedIcon = iconColor ?? AppColors.primary;
+    final resolvedLabel = labelColor ?? AppColors.textPrimary;
 
-    return InkWell(
-      onTap: onTap,
-      splashColor: const Color(0xFFFFE4EC),
-      highlightColor: const Color(0xFFFFE4EC).withOpacity(0.4),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        child: Row(
-          children: [
-            // Icon container
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: resolvedIconColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+    return Material(
+      color: AppColors.surface, // solid white surface
+      child: InkWell(
+        onTap: onTap,
+        splashColor: AppColors.primaryLight, // solid light pink splash
+        highlightColor: AppColors.primaryLight,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          child: Row(
+            children: [
+              // icon container — solid light pink background
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: resolvedIcon, size: 20),
               ),
-              child: Icon(icon, size: 20, color: resolvedIconColor),
-            ),
 
-            const SizedBox(width: 16),
+              const SizedBox(width: 14),
 
-            // Label
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: resolvedLabelColor,
+              // label
+              Expanded(
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: resolvedLabel,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
 
-            // Trailing widget or arrow
-            if (trailing != null)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  trailing!,
-                  if (showArrow) ...[
-                    const SizedBox(width: 8),
-                    const Icon(
-                      Icons.chevron_right,
-                      size: 20,
-                      color: Color(0xFF7D7D7D),
-                    ),
-                  ],
-                ],
-              )
-            else if (showArrow)
-              const Icon(
-                Icons.chevron_right,
-                size: 20,
-                color: Color(0xFF7D7D7D),
-              ),
-          ],
+              // trailing widget or arrow
+              if (trailing != null)
+                trailing!
+              else if (showArrow)
+                const Icon(
+                  Icons.chevron_right,
+                  color: AppColors.textSecondary, // solid muted arrow
+                  size: 20,
+                ),
+            ],
+          ),
         ),
       ),
     );

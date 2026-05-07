@@ -7,7 +7,9 @@ class PaymentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // 1. DATA HANDLING: Get data from the previous screen (Cart List)
     final raw = ModalRoute.of(context)?.settings.arguments;
-    final items = raw != null ? List<Map<String, dynamic>>.from(raw as List) : [];
+    final items = raw != null
+        ? List<Map<String, dynamic>>.from(raw as List)
+        : [];
 
     // Keep order consistent based on index
     items.sort((a, b) => (a['index'] ?? 0).compareTo(b['index'] ?? 0));
@@ -22,27 +24,35 @@ class PaymentPage extends StatelessWidget {
     double birthdayDiscount = 0.00;
     double memberDiscount = 0.00;
     double deliveryFee = 1.00;
-    double total = subtotal - discount - birthdayDiscount - memberDiscount + deliveryFee;
+    double total =
+        subtotal - discount - birthdayDiscount - memberDiscount + deliveryFee;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9), // Subtle off-white background
-
       // --- APP BAR ---
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.grey),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            size: 20,
+            color: Colors.grey,
+          ),
           onPressed: () => Navigator.pop(context), // 🟢 Back to cart_list
         ),
         title: const Text(
           "Payment",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: Colors.grey.withOpacity(0.1), height: 1),
+          child: Container(color: Colors.grey, height: 1),
         ),
       ),
 
@@ -75,7 +85,10 @@ class PaymentPage extends StatelessWidget {
                         alignment: Alignment.center,
                         child: const Text(
                           "Delivery",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -83,7 +96,10 @@ class PaymentPage extends StatelessWidget {
                       child: Center(
                         child: Text(
                           "Pick Up",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -107,20 +123,30 @@ class PaymentPage extends StatelessWidget {
                 children: [
                   const Text(
                     "Note",
-                    style: TextStyle(fontSize: 13, color: Color(0xFF4A61A8), fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFF4A61A8),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     maxLines: 3,
                     decoration: InputDecoration(
                       hintText: "Enter note",
-                      hintStyle: TextStyle(color: Colors.grey[300], fontSize: 14),
+                      hintStyle: TextStyle(
+                        color: Colors.grey[300],
+                        fontSize: 14,
+                      ),
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.all(12),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 0.8),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFE0E0E0),
+                          width: 0.8,
+                        ),
                       ),
                     ),
                   ),
@@ -148,11 +174,22 @@ class PaymentPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 "PAYMENT DETAILS",
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF333333)),
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF333333),
+                ),
               ),
             ),
 
-            _buildPaymentSummary(subtotal, discount, birthdayDiscount, memberDiscount, deliveryFee, total),
+            _buildPaymentSummary(
+              subtotal,
+              discount,
+              birthdayDiscount,
+              memberDiscount,
+              deliveryFee,
+              total,
+            ),
 
             /// ABA KHQR TILE
             _buildABATile(),
@@ -218,7 +255,13 @@ class PaymentPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item['name'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                Text(
+                  item['name'] ?? '',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
                 const Text(
                   "Creates vivid face with gorgeous co...",
                   maxLines: 1,
@@ -227,31 +270,59 @@ class PaymentPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   "\$${(item['price'] ?? 0).toStringAsFixed(2)}",
-                  style: const TextStyle(fontSize: 17, color: Color(0xFFFF2D6C), fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 17,
+                    color: Color(0xFFFF2D6C),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
           ),
-          Text("x${item['qty'] ?? 1}", style: const TextStyle(fontSize: 16, color: Colors.grey)),
+          Text(
+            "x${item['qty'] ?? 1}",
+            style: const TextStyle(fontSize: 16, color: Colors.grey),
+          ),
         ],
       ),
     );
   }
 
   /// HELPER: Payment Detail List
-  Widget _buildPaymentSummary(double sub, double disc, double birth, double mem, double del, double total) {
-    Widget row(String label, String value, {Color? valColor, bool isBold = false}) {
+  Widget _buildPaymentSummary(
+    double sub,
+    double disc,
+    double birth,
+    double mem,
+    double del,
+    double total,
+  ) {
+    Widget row(
+      String label,
+      String value, {
+      Color? valColor,
+      bool isBold = false,
+    }) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: TextStyle(fontSize: 14, color: isBold ? Colors.black : Colors.black87)),
-            Text(value,
-                style: TextStyle(
-                    fontSize: 14,
-                    color: valColor ?? Colors.black87,
-                    fontWeight: isBold ? FontWeight.bold : FontWeight.w500)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                color: isBold ? Colors.black : Colors.black87,
+              ),
+            ),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 14,
+                color: valColor ?? Colors.black87,
+                fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+              ),
+            ),
           ],
         ),
       );
@@ -262,8 +333,16 @@ class PaymentPage extends StatelessWidget {
       child: Column(
         children: [
           row("Sub total", "\$ ${sub.toStringAsFixed(2)}"),
-          row("Discount", "-\$ ${disc.toStringAsFixed(2)}", valColor: const Color(0xFFFF8B94)),
-          row("Birthday Discount", "-\$ ${birth.toStringAsFixed(2)}", valColor: Colors.lightGreen),
+          row(
+            "Discount",
+            "-\$ ${disc.toStringAsFixed(2)}",
+            valColor: const Color(0xFFFF8B94),
+          ),
+          row(
+            "Birthday Discount",
+            "-\$ ${birth.toStringAsFixed(2)}",
+            valColor: Colors.lightGreen,
+          ),
           row("Member Discount(0.0%)", "-\$ ${mem.toStringAsFixed(2)}"),
           row("Delivery Fee", "\$ ${del.toStringAsFixed(0)}"),
           const Divider(height: 30, thickness: 1),
@@ -287,17 +366,32 @@ class PaymentPage extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: const Color(0xFFD0001D), borderRadius: BorderRadius.circular(6)),
-            child: const Text("KHQR",
-                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+            decoration: BoxDecoration(
+              color: const Color(0xFFD0001D),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Text(
+              "KHQR",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("ABA KHQR", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                Text("Scan to pay with any banking app", style: TextStyle(fontSize: 11, color: Colors.grey)),
+                Text(
+                  "ABA KHQR",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                Text(
+                  "Scan to pay with any banking app",
+                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                ),
               ],
             ),
           ),
@@ -312,7 +406,9 @@ class PaymentPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
       decoration: const BoxDecoration(
-          color: Colors.white, border: Border(top: BorderSide(color: Color(0xFFF0F0F0)))),
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Color(0xFFF0F0F0))),
+      ),
       child: ElevatedButton(
         onPressed: () {
           // Logic for processing payment
@@ -320,11 +416,19 @@ class PaymentPage extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFFF2D6C),
           minimumSize: const Size(double.infinity, 55),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           elevation: 0,
         ),
-        child: const Text("PAY NOW",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+        child: const Text(
+          "PAY NOW",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.1,
+          ),
+        ),
       ),
     );
   }

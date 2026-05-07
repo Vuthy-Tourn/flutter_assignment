@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../../../data/models/address_data.dart'; // ← adjust path
+import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/address_data.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -45,8 +46,11 @@ class _MapPageState extends State<MapPage> {
       }
 
       final pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
+
       final latlng = LatLng(pos.latitude, pos.longitude);
       setState(() {
         _center = _markerPosition = latlng;
@@ -64,17 +68,16 @@ class _MapPageState extends State<MapPage> {
   void _showSnack(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: const Color(0xFFFF79A2)),
+      SnackBar(content: Text(msg), backgroundColor: AppColors.primary),
     );
   }
 
-  /// Shows a bottom sheet asking the user to label the address before saving.
   Future<void> _confirmAndSave() async {
     final label = await _showLabelPicker();
-    if (label == null || !mounted) return; // user dismissed
+    if (label == null || !mounted) return;
 
     setState(() => _saving = true);
-    await Future.delayed(const Duration(milliseconds: 200)); // small UX pause
+    await Future.delayed(const Duration(milliseconds: 200));
 
     AddressData.instance.add(label: label, address: _locationLabel);
 
@@ -84,15 +87,14 @@ class _MapPageState extends State<MapPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('📍 "$label" address saved!'),
-        backgroundColor: const Color(0xFFFF79A2),
+        backgroundColor: AppColors.primary,
         duration: const Duration(seconds: 2),
       ),
     );
 
-    Navigator.pop(context, _locationLabel); // return address to caller
+    Navigator.pop(context, _locationLabel);
   }
 
-  /// Quick label picker sheet.
   Future<String?> _showLabelPicker() {
     const presets = ['Home', 'Work', 'Other'];
     final customController = TextEditingController();
@@ -105,7 +107,7 @@ class _MapPageState extends State<MapPage> {
         padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
         child: Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: AppColors.surface,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
@@ -113,14 +115,13 @@ class _MapPageState extends State<MapPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Handle
               Center(
                 child: Container(
                   width: 36,
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE9DCE1),
+                    color: AppColors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -130,53 +131,50 @@ class _MapPageState extends State<MapPage> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF2B2B2B),
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Preset chips
               Wrap(
                 spacing: 10,
                 children: presets
                     .map(
                       (p) => ActionChip(
                         label: Text(p),
-                        backgroundColor: const Color(0xFFFFF0F5),
+                        backgroundColor: AppColors.primaryLight,
                         labelStyle: const TextStyle(
-                          color: Color(0xFFFF79A2),
+                          color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                         ),
-                        side: const BorderSide(color: Color(0xFFFF79A2)),
+                        side: const BorderSide(color: AppColors.primary),
                         onPressed: () => Navigator.pop(ctx, p),
                       ),
                     )
                     .toList(),
               ),
-
               const SizedBox(height: 16),
               const Text(
                 'Or enter a custom label:',
-                style: TextStyle(fontSize: 13, color: Color(0xFF7D7D7D)),
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 8),
-
-              // Custom text field
               TextField(
                 controller: customController,
-                autofocus: false,
-                style: const TextStyle(fontSize: 14, color: Color(0xFF2B2B2B)),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
+                ),
                 decoration: InputDecoration(
-                  hintText: 'e.g. Mom\'s house',
-                  hintStyle: const TextStyle(color: Color(0xFF7D7D7D)),
+                  hintText: "e.g. Mom's house",
+                  hintStyle: const TextStyle(color: AppColors.textSecondary),
                   enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFE9DCE1)),
+                    borderSide: BorderSide(color: AppColors.border),
                   ),
                   focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFFF79A2)),
+                    borderSide: BorderSide(color: AppColors.primary),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.check, color: Color(0xFFFF79A2)),
+                    icon: const Icon(Icons.check, color: AppColors.primary),
                     onPressed: () {
                       final text = customController.text.trim();
                       if (text.isNotEmpty) Navigator.pop(ctx, text);
@@ -199,14 +197,14 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFCFD),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFCFD),
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
             Icons.chevron_left,
-            color: Color(0xFFFF79A2),
+            color: AppColors.primary,
             size: 28,
           ),
           onPressed: () => Navigator.pop(context),
@@ -217,13 +215,13 @@ class _MapPageState extends State<MapPage> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF2B2B2B),
+            color: AppColors.textPrimary,
           ),
         ),
       ),
       body: Stack(
         children: [
-          // ── Map ──────────────────────────────────────────────────────────
+          // ── Map ────────────────────────────────────────────────────
           Positioned.fill(
             bottom: 130,
             child: Stack(
@@ -270,26 +268,20 @@ class _MapPageState extends State<MapPage> {
                   child: Container(
                     height: 44,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: const TextField(
                       decoration: InputDecoration(
                         hintText: 'Search location...',
                         hintStyle: TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF7D7D7D),
+                          color: AppColors.textSecondary,
                         ),
                         prefixIcon: Icon(
                           Icons.search,
-                          color: Color(0xFF7D7D7D),
+                          color: AppColors.textSecondary,
                           size: 20,
                         ),
                         border: InputBorder.none,
@@ -309,26 +301,21 @@ class _MapPageState extends State<MapPage> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.surface,
                         shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.12),
-                            blurRadius: 6,
-                          ),
-                        ],
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: _locating
                           ? const Padding(
                               padding: EdgeInsets.all(10),
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Color(0xFFFF79A2),
+                                color: AppColors.primary,
                               ),
                             )
                           : const Icon(
                               Icons.gps_fixed,
-                              color: Color(0xFF2B2B2B),
+                              color: AppColors.textPrimary,
                               size: 22,
                             ),
                     ),
@@ -345,12 +332,15 @@ class _MapPageState extends State<MapPage> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.75),
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Text(
                       '© OpenStreetMap © CARTO',
-                      style: TextStyle(fontSize: 9, color: Color(0xFF555555)),
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
                 ),
@@ -358,7 +348,7 @@ class _MapPageState extends State<MapPage> {
             ),
           ),
 
-          // ── Bottom confirm sheet ──────────────────────────────────────────
+          // ── Bottom panel ────────────────────────────────────────────
           Positioned(
             bottom: 0,
             left: 0,
@@ -371,15 +361,9 @@ class _MapPageState extends State<MapPage> {
                 16 + MediaQuery.of(context).viewPadding.bottom,
               ),
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: AppColors.surface,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x1A000000),
-                    blurRadius: 16,
-                    offset: Offset(0, -4),
-                  ),
-                ],
+                border: Border(top: BorderSide(color: AppColors.border)),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -389,7 +373,7 @@ class _MapPageState extends State<MapPage> {
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE9DCE1),
+                      color: AppColors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -397,7 +381,7 @@ class _MapPageState extends State<MapPage> {
                     children: [
                       const Icon(
                         Icons.location_on,
-                        color: Color(0xFFFF79A2),
+                        color: AppColors.primary,
                         size: 18,
                       ),
                       const SizedBox(width: 6),
@@ -407,7 +391,7 @@ class _MapPageState extends State<MapPage> {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF2B2B2B),
+                            color: AppColors.textPrimary,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -422,9 +406,9 @@ class _MapPageState extends State<MapPage> {
                     child: ElevatedButton(
                       onPressed: _saving ? null : _confirmAndSave,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF79A2),
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: const Color(0xFFFFB8CE),
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.surface,
+                        disabledBackgroundColor: AppColors.secondary,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -436,7 +420,7 @@ class _MapPageState extends State<MapPage> {
                               height: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: AppColors.surface,
                               ),
                             )
                           : const Text(
@@ -458,10 +442,11 @@ class _MapPageState extends State<MapPage> {
   }
 }
 
-// ── Custom pin ────────────────────────────────────────────────────────────────
+// ── Pin marker ────────────────────────────────────────────────────────────────
 
 class _PinIcon extends StatelessWidget {
   const _PinIcon();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -471,19 +456,16 @@ class _PinIcon extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: const BoxDecoration(
-            color: Color(0xFFFF79A2),
+            color: AppColors.primary,
             shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Color(0x44FF79A2),
-                blurRadius: 8,
-                spreadRadius: 2,
-              ),
-            ],
           ),
-          child: const Icon(Icons.location_on, color: Colors.white, size: 18),
+          child: const Icon(
+            Icons.location_on,
+            color: AppColors.surface,
+            size: 18,
+          ),
         ),
-        Container(width: 2, height: 10, color: const Color(0xFFFF79A2)),
+        Container(width: 2, height: 10, color: AppColors.primary),
       ],
     );
   }

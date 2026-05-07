@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
   const PrivacyPolicyPage({super.key});
@@ -6,14 +7,14 @@ class PrivacyPolicyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFCFD),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFCFD),
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
             Icons.chevron_left,
-            color: Color(0xFFFF79A2),
+            color: AppColors.primary,
             size: 28,
           ),
           onPressed: () => Navigator.pop(context),
@@ -24,7 +25,7 @@ class PrivacyPolicyPage extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF2B2B2B),
+            color: AppColors.textPrimary,
           ),
         ),
       ),
@@ -34,9 +35,7 @@ class PrivacyPolicyPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 24),
-
-            // Logo
-            Center(
+            const Center(
               child: Column(
                 children: [
                   Text(
@@ -44,7 +43,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFFFF79A2),
+                      color: AppColors.primary,
                       height: 1.1,
                     ),
                   ),
@@ -53,20 +52,17 @@ class PrivacyPolicyPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFFFF79A2),
+                      color: AppColors.primary,
                       height: 1.1,
                     ),
                   ),
                 ],
               ),
             ),
-
             const SizedBox(height: 28),
-
             ..._sections.map(
               (s) => _PolicySection(title: s['title']!, body: s['body']!),
             ),
-
             const SizedBox(height: 40),
           ],
         ),
@@ -136,7 +132,6 @@ class PrivacyPolicyPage extends StatelessWidget {
 class _PolicySection extends StatelessWidget {
   final String title;
   final String body;
-
   const _PolicySection({required this.title, required this.body});
 
   @override
@@ -151,7 +146,7 @@ class _PolicySection extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF2B2B2B),
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 6),
@@ -159,7 +154,7 @@ class _PolicySection extends StatelessWidget {
             body,
             style: const TextStyle(
               fontSize: 13,
-              color: Color(0xFF2B2B2B),
+              color: AppColors.textPrimary,
               height: 1.6,
             ),
           ),

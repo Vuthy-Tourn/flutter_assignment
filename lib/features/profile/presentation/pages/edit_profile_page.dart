@@ -307,7 +307,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Widget _buildDropdown() {
     return DropdownButtonFormField<String>(
-      value: _selectedGender,
+      initialValue: _selectedGender,
       hint: const Text(
         'Select your gender',
         style: TextStyle(fontSize: 14, color: Color(0xFF7D7D7D)),

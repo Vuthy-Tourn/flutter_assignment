@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/theme/app_colors.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LANGUAGE MODAL
-// Usage: showLanguageModal(context);
 // ─────────────────────────────────────────────────────────────────────────────
 
 Future<void> showLanguageModal(BuildContext context) {
@@ -12,14 +12,13 @@ Future<void> showLanguageModal(BuildContext context) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.surface,
     builder: (_) => const _LanguageModal(),
   );
 }
 
 class _LanguageModal extends StatefulWidget {
   const _LanguageModal();
-
   @override
   State<_LanguageModal> createState() => _LanguageModalState();
 }
@@ -42,88 +41,81 @@ class _LanguageModalState extends State<_LanguageModal> {
         children: [
           Row(
             children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFE4EC),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.language,
-                  color: Color(0xFFFF79A2),
-                  size: 20,
-                ),
-              ),
+              _iconBox(Icons.language),
               const SizedBox(width: 12),
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Language',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF2B2B2B),
-                    ),
-                  ),
-                  Text(
-                    'change to your preference language',
-                    style: TextStyle(fontSize: 12, color: Color(0xFF7D7D7D)),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: const Icon(Icons.close, color: Color(0xFF7D7D7D)),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          ..._languages.map(
-            (lang) => GestureDetector(
-              onTap: () => setState(() => _selected = lang['label']!),
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  color: _selected == lang['label']
-                      ? const Color(0xFFFFE4EC)
-                      : const Color(0xFFF9F9F9),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: _selected == lang['label']
-                        ? const Color(0xFFFF79A2)
-                        : Colors.transparent,
-                  ),
-                ),
-                child: Row(
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Radio<String>(
-                      value: lang['label']!,
-                      groupValue: _selected,
-                      activeColor: const Color(0xFFFF79A2),
-                      onChanged: (v) => setState(() => _selected = v!),
+                    Text(
+                      'Language',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     Text(
-                      lang['label']!,
+                      'change to your preference language',
                       style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: _selected == lang['label']
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                        color: const Color(0xFF2B2B2B),
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ],
                 ),
               ),
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const Icon(Icons.close, color: AppColors.textSecondary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          RadioGroup<String>(
+            groupValue: _selected,
+            onChanged: (v) => setState(() => _selected = v!),
+            child: Column(
+              children: _languages.map((lang) {
+                final isSelected = _selected == lang['label'];
+                return GestureDetector(
+                  onTap: () => setState(() => _selected = lang['label']!),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.primaryLight
+                          : AppColors.background,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.border,
+                      ),
+                    ),
+                    child: RadioListTile<String>(
+                      value: lang['label']!,
+                      activeColor: AppColors.primary,
+                      title: Text(
+                        lang['label']!,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
@@ -134,7 +126,6 @@ class _LanguageModalState extends State<_LanguageModal> {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CUSTOMER SERVICE MODAL
-// Usage: showCustomerServiceModal(context);
 // ─────────────────────────────────────────────────────────────────────────────
 
 Future<void> showCustomerServiceModal(BuildContext context) {
@@ -143,7 +134,7 @@ Future<void> showCustomerServiceModal(BuildContext context) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.surface,
     builder: (_) => const _CustomerServiceModal(),
   );
 }
@@ -153,7 +144,9 @@ class _CustomerServiceModal extends StatelessWidget {
 
   Future<void> _call(BuildContext context, String number) async {
     final uri = Uri.parse('tel:$number');
-    if (await canLaunchUrl(uri)) {
+    final canCall = await canLaunchUrl(uri);
+    if (!context.mounted) return;
+    if (canCall) {
       await launchUrl(uri);
     } else {
       showPhoneCallModal(context, number);
@@ -176,61 +169,51 @@ class _CustomerServiceModal extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFE4EC),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.headset_mic_outlined,
-                  color: Color(0xFFFF79A2),
-                  size: 20,
-                ),
-              ),
+              _iconBox(Icons.headset_mic_outlined),
               const SizedBox(width: 12),
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Customer Service',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF2B2B2B),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Customer Service',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
-                  ),
-                  Text(
-                    'contact us when there is an urgent',
-                    style: TextStyle(fontSize: 12, color: Color(0xFF7D7D7D)),
-                  ),
-                ],
+                    Text(
+                      'contact us when there is an urgent',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const Spacer(),
               GestureDetector(
                 onTap: () => Navigator.pop(context),
-                child: const Icon(Icons.close, color: Color(0xFF7D7D7D)),
+                child: const Icon(Icons.close, color: AppColors.textSecondary),
               ),
             ],
           ),
-
           const SizedBox(height: 20),
-
-          // Smart call center
           _ServiceTile(
-            color: const Color(0xFF2AB34B),
+            color: const Color(
+              0xFF2AB34B,
+            ), // WhatsApp/call green — brand color, kept as-is
             letter: 'S',
             title: 'External Shine Call Center',
             subtitle: '016 267 168',
             onTap: () => _call(context, '016267168'),
           ),
-
           const SizedBox(height: 12),
-
-          // Facebook
           _ServiceTile(
-            color: const Color(0xFF1877F2),
+            color: const Color(
+              0xFF1877F2,
+            ), // Facebook blue — brand color, kept as-is
             letter: 'f',
             title: 'External Shine FB',
             subtitle: 'https://facebook.com/external-shi...',
@@ -264,8 +247,9 @@ class _ServiceTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF9F9F9),
+          color: AppColors.background,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           children: [
@@ -280,7 +264,7 @@ class _ServiceTile extends StatelessWidget {
                 child: Text(
                   letter,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -297,7 +281,7 @@ class _ServiceTile extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF2B2B2B),
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -305,14 +289,18 @@ class _ServiceTile extends StatelessWidget {
                     subtitle,
                     style: const TextStyle(
                       fontSize: 12,
-                      color: Color(0xFF7D7D7D),
+                      color: AppColors.textSecondary,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: Color(0xFF7D7D7D), size: 20),
+            const Icon(
+              Icons.chevron_right,
+              color: AppColors.textSecondary,
+              size: 20,
+            ),
           ],
         ),
       ),
@@ -322,7 +310,6 @@ class _ServiceTile extends StatelessWidget {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PHONE CALL MODAL
-// Usage: showPhoneCallModal(context, '016 267 168');
 // ─────────────────────────────────────────────────────────────────────────────
 
 Future<void> showPhoneCallModal(BuildContext context, String number) {
@@ -340,7 +327,7 @@ class _PhoneCallModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -353,11 +340,12 @@ class _PhoneCallModal extends StatelessWidget {
                 onPressed: () async {
                   final uri = Uri.parse('tel:$number');
                   if (await canLaunchUrl(uri)) await launchUrl(uri);
+                  if (!context.mounted) return;
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF79A2),
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.surface,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -379,7 +367,7 @@ class _PhoneCallModal extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: () => Navigator.pop(context),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFFE9DCE1)),
+                  side: const BorderSide(color: AppColors.border),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -388,7 +376,7 @@ class _PhoneCallModal extends StatelessWidget {
                   'Cancel',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Color(0xFF2B2B2B),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -403,7 +391,6 @@ class _PhoneCallModal extends StatelessWidget {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LOGOUT MODAL
-// Usage: showLogoutModal(context, onConfirm: () { ... });
 // ─────────────────────────────────────────────────────────────────────────────
 
 Future<void> showLogoutModal(
@@ -424,7 +411,7 @@ class _LogoutModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
         child: Column(
@@ -437,12 +424,12 @@ class _LogoutModal extends StatelessWidget {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFEBEE),
+                    color: AppColors.errorLight,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
                     Icons.logout,
-                    color: Color(0xFFFF5252),
+                    color: AppColors.error,
                     size: 20,
                   ),
                 ),
@@ -452,20 +439,23 @@ class _LogoutModal extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF2B2B2B),
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const Spacer(),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.close, color: Color(0xFF7D7D7D)),
+                  child: const Icon(
+                    Icons.close,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 14),
             const Text(
               'Are you sure you want to logout?',
-              style: TextStyle(fontSize: 14, color: Color(0xFF7D7D7D)),
+              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 20),
             Row(
@@ -475,7 +465,7 @@ class _LogoutModal extends StatelessWidget {
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: const BorderSide(color: Color(0xFFE9DCE1)),
+                      side: const BorderSide(color: AppColors.border),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -484,7 +474,7 @@ class _LogoutModal extends StatelessWidget {
                       'Cancel',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF2B2B2B),
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -498,8 +488,8 @@ class _LogoutModal extends StatelessWidget {
                       onConfirm();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF2160),
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.accent,
+                      foregroundColor: AppColors.surface,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -522,4 +512,20 @@ class _LogoutModal extends StatelessWidget {
       ),
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared helper
+// ─────────────────────────────────────────────────────────────────────────────
+
+Widget _iconBox(IconData icon) {
+  return Container(
+    width: 38,
+    height: 38,
+    decoration: BoxDecoration(
+      color: AppColors.primaryLight,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Icon(icon, color: AppColors.primary, size: 20),
+  );
 }

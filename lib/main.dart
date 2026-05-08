@@ -10,6 +10,7 @@ import 'features/home/presentation/pages/home_screen.dart';
 import 'features/home/presentation/pages/category_page.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/sign_up_page.dart';
+import 'features/inbox/presentation/pages/inbox_page.dart';
 import 'features/product_detail/presentation/pages/product_detail_page.dart';
 import 'features/profile/presentation/pages/profile_page.dart';
 import 'features/ui_search/search_page.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
         AppRouter.signUp: (_) => const SignUpPage(),
         AppRouter.home: (_) => const HomeScreen(),
         AppRouter.category: (_) => const CategoryPage(),
-        // AppRouter.inbox: (_) => const InboxScreen(),
+         AppRouter.inbox: (_) => const InboxScreen(),
         AppRouter.cart: (_) => const CartScreen(),
         AppRouter.payment: (_) => const PaymentPage(),
 

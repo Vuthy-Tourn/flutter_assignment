@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_product_detail_app/features/home/presentation/pages/notification_screen.dart';
+import 'package:flutter_product_detail_app/features/inbox/presentation/pages/inbox_page.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:flutter_product_detail_app/features/ui_search/search_page.dart';
 
@@ -45,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildHomePage(tt),
           const CartScreen(),
           const OrderPage(),
-          const _InboxPage(),
+          const InboxScreen(),
           const ProfilePage(),
         ],
       ),
@@ -166,13 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// ── Placeholder pages ────────────────────────────────────────────────────────
 
-class _InboxPage extends StatelessWidget {
-  const _InboxPage();
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('Inbox Page')));
-}
 
 

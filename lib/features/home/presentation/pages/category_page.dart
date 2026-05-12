@@ -269,10 +269,11 @@ class _CategoryPageState extends State<CategoryPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.search_off_rounded,
-                          size: 48,
-                          color: AppColors.border,
+                        Image.asset(
+                          'assets/images/empty.png',
+                          width: 120,
+                          height: 120,
+                          fit: BoxFit.contain,
                         ),
                         const SizedBox(height: 12),
                         Text(

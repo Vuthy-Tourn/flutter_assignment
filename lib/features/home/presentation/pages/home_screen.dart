@@ -9,6 +9,7 @@ import '../widgets/brand_chip.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hero_carousel.dart';
 
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -30,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0: // Home — already here
         break;
       case 1: // Cart — not ready yet
-      // Navigator.pushNamed(context, AppRouter.cart);
+      Navigator.pushReplacementNamed(context, AppRouter.cart);
         break;
       case 2: // Order — not ready yet
       // Navigator.pushNamed(context, AppRouter.order);
@@ -73,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.notifications_none_outlined),
             color: AppColors.secondary,
-            onPressed: () => Navigator.pushNamed(context, AppRouter.inbox),
+            onPressed: () => Navigator.pushNamed(context, AppRouter.search),
           ),
           IconButton(
             icon: const Icon(Icons.search_outlined),

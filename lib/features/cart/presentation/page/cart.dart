@@ -4,7 +4,6 @@ import '../widgets/cart_widget.dart';
 import '../../../home/presentation/widgets/bottom_nav_bar.dart';
 import '../../../../core/router/app_router.dart';
 
-
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
@@ -34,17 +33,15 @@ class _CartScreenState extends State<CartScreen> {
     },
   ];
 
-  // ── LOGIC ─────────────────────────────────────────────
+  // ── LOGIC (រក្សាទុកទម្រង់ដើម) ───────────────────────────
 
   double get total => items
       .where((e) => e['selected'] == true)
       .fold(0, (sum, e) => sum + (e['price'] * e['qty']));
 
-  int get selectedCount =>
-      items.where((e) => e['selected'] == true).length;
+  int get selectedCount => items.where((e) => e['selected'] == true).length;
 
-  bool get isAllSelected =>
-      items.every((e) => e['selected'] == true);
+  bool get isAllSelected => items.every((e) => e['selected'] == true);
 
   bool get hasSelectedItems => selectedCount > 0;
 
@@ -82,9 +79,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-
-      /// 🔝 APP BAR (UPDATED)
+      backgroundColor: Colors.white, // ប្តូរជាពណ៌សដើម្បីឱ្យស៊ីជាមួយ Design ថ្មី
       appBar: AppBar(
         title: const Text(
           "Cart",
@@ -98,21 +93,17 @@ class _CartScreenState extends State<CartScreen> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none_outlined,
-                color: AppColors.secondary),
-            onPressed: () =>
-                Navigator.pushNamed(context, AppRouter.inbox),
+            icon: const Icon(Icons.search_outlined, color: Colors.pinkAccent),
+            onPressed: () => Navigator.pushNamed(context, AppRouter.search),
           ),
           IconButton(
-            icon: const Icon(Icons.search_outlined,
-                color: AppColors.secondary),
-            onPressed: () =>
-                Navigator.pushNamed(context, AppRouter.search),
+            icon: const Icon(Icons.notifications_none_outlined,
+                color: Colors.pinkAccent),
+            onPressed: () => Navigator.pushNamed(context, AppRouter.inbox),
           ),
           const SizedBox(width: 8),
         ],
       ),
-
       body: Column(
         children: [
           _buildSelectAllRow(),
@@ -120,6 +111,7 @@ class _CartScreenState extends State<CartScreen> {
           /// 🛒 CART LIST
           Expanded(
             child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: items.length,
               itemBuilder: (_, index) {
                 final item = items[index];
@@ -131,8 +123,7 @@ class _CartScreenState extends State<CartScreen> {
                   quantity: item['qty'],
                   isSelected: item['selected'],
                   imagePath: item['image'],
-                  onIncrement: () =>
-                      setState(() => item['qty']++),
+                  onIncrement: () => setState(() => item['qty']++),
                   onDecrement: () {
                     if (item['qty'] > 1) {
                       setState(() => item['qty']--);
@@ -148,10 +139,10 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
 
+          /// 💳 ផ្នែកដែលបាន DESIGN ថ្មីតាមរូបភាព image_85e178.png
           _buildBottomCheckout(),
         ],
       ),
-
       bottomNavigationBar: BottomNavBar(
         currentIndex: currentIndex,
         onTap: _onNavTap,
@@ -162,18 +153,22 @@ class _CartScreenState extends State<CartScreen> {
   /// 🔘 SELECT ALL ROW
   Widget _buildSelectAllRow() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           Checkbox(
             value: isAllSelected,
-            activeColor: Colors.pink,
+            activeColor: Colors.pinkAccent,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             onChanged: _toggleSelectAll,
           ),
-          const Text("Select all"),
+          const Text(
+            "Select all",
+            style: TextStyle(color: Colors.grey, fontSize: 16),
+          ),
           const Spacer(),
           IconButton(
-            icon: const Icon(Icons.delete_outline),
+            icon: const Icon(Icons.delete_outline, color: Colors.grey),
             onPressed: () {
               setState(() {
                 items.removeWhere((e) => e['selected'] == true);
@@ -185,58 +180,73 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  /// 💳 BOTTOM CHECKOUT
+  /// 💳 BOTTOM CHECKOUT (Design Updated to match image_85e178.png)
   Widget _buildBottomCheckout() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius:
-        BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: hasSelectedItems ? _goToPayment : null,
-              child: Container(
-                height: 55,
-                decoration: BoxDecoration(
-                  color: hasSelectedItems
-                      ? Colors.pink
-                      : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  "Place order ($selectedCount)",
-                  style: TextStyle(
-                    color: hasSelectedItems
-                        ? Colors.white
-                        : Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
+      child: InkWell(
+        onTap: hasSelectedItems ? _goToPayment : null,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: double.infinity,
+          height: 75,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: hasSelectedItems ? const Color(0xFFFF2D6C) : Colors.grey[400],
+            borderRadius: BorderRadius.circular(16),
           ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Sub total",
-                  style: TextStyle(color: Colors.grey)),
-              Text(
-                "\$${total.toStringAsFixed(2)}",
-                style: const TextStyle(
-                  color: Colors.pink,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+              // ផ្នែកអក្សរខាងឆ្វេង: Place order (2)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Place order ",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    "($selectedCount)",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+
+              // ផ្នែកតម្លៃខាងស្តាំ: Sub total / $ 28.70
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text(
+                    "Sub total",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    "\$ ${total.toStringAsFixed(2)}",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
               ),
             ],
-          )
-        ],
+          ),
+        ),
       ),
     );
   }

@@ -6,7 +6,7 @@ import '../widgets/QR_widget.dart';
 import 'delivery_screen.dart';
 import 'Branch_Screen.dart';
 import 'up_date.dart';
-import 'success.dart'; // Ensure this matches your success screen file name
+import 'success.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -22,19 +22,15 @@ class _PaymentPageState extends State<PaymentPage> {
   String _selectedBranch = "Choose Branches";
   String _selectedPickUpTime = "Pick Up Time";
 
-  // Check if ABA KHQR was selected
   bool _isKHQRSelected = false;
 
   final Color pinkColor = const Color(0xFFFF2D6C);
   final Color khqrRed = const Color(0xFFD50000);
 
-  // ================= THE QR POPUP =================
+  // ================= Logic ដើម (រក្សាទុក) =================
 
   void _showQRModal(double total) {
-    setState(() {
-      _isKHQRSelected = true;
-    });
-
+    setState(() => _isKHQRSelected = true);
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -91,8 +87,6 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // ================= CUSTOM KEYBOARD =================
-
   void _showCustomKeyboard() {
     showModalBottomSheet(
       context: context,
@@ -121,16 +115,17 @@ class _PaymentPageState extends State<PaymentPage> {
     double total = subtotal - discount + deliveryFee;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: Colors.black54),
+          icon: const Icon(Icons.arrow_back_ios, size: 20, color: Colors.black54),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("Payment", style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w700)),
+        title: const Text("Payment",
+            style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       bottomNavigationBar: _buildBottomPayButton(total),
       body: SingleChildScrollView(
@@ -138,13 +133,13 @@ class _PaymentPageState extends State<PaymentPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             _buildToggle(),
-            const SizedBox(height: 14),
+            const SizedBox(height: 25),
 
             if (_isDeliverySelected) ...[
-              _buildTile(Icons.location_on_outlined, "Address", onTap: () => Navigator.pushNamed(context, AppRouter.address)),
-              _buildTile(Icons.delivery_dining_outlined, _selectedDeliveryMethod, onTap: () async {
+              _buildTile(Icons.map_outlined, "Address", onTap: () => Navigator.pushNamed(context, AppRouter.address)),
+              _buildTile(Icons.local_shipping_outlined, _selectedDeliveryMethod, onTap: () async {
                 final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryScreen()));
                 if (result != null && result is String) setState(() => _selectedDeliveryMethod = result);
               }),
@@ -159,25 +154,22 @@ class _PaymentPageState extends State<PaymentPage> {
 
             _buildTile(Icons.confirmation_number_outlined, "Apply Voucher", onTap: () => Voucher.show(context)),
 
-            const SizedBox(height: 16),
-            const Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text("Note", style: TextStyle(color: Colors.grey, fontSize: 12))),
-            const SizedBox(height: 6),
-            _buildNoteBox(),
+            const SizedBox(height: 25),
+            _buildNoteBox(), // កែសម្រួលតាម image_856637.png
 
-            const SizedBox(height: 20),
-            const Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text("Order Summary", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
-            const SizedBox(height: 10),
-            ...items.map((item) => _buildItemCard(item)),
+            const SizedBox(height: 25),
+            const Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: Text("Order Summary", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500))),
+            const SizedBox(height: 12),
+            ...items.map((item) => _buildItemCard(item)), // កែសម្រួលតាម image_856637.png
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text("PAYMENT DETAILS", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black54))
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text("PAYMENT DETAILS", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.black87))
             ),
-            _buildPaymentSummary(subtotal, discount, deliveryFee, total),
+            _buildPaymentSummary(subtotal, discount, deliveryFee, total), // កែសម្រួលតាម image_856637.png
 
             _buildABAKHQRSection(total),
-
             const SizedBox(height: 20),
           ],
         ),
@@ -185,71 +177,17 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // ================= UI BUILDERS =================
-
-  Widget _buildABAKHQRSection(double total) {
-    return GestureDetector(
-      onTap: () => _showQRModal(total),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: _isKHQRSelected ? pinkColor : const Color(0xFFE6E6E6), width: _isKHQRSelected ? 1.5 : 1.0),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40, height: 40,
-              decoration: BoxDecoration(color: khqrRed, borderRadius: BorderRadius.circular(8)),
-              alignment: Alignment.center,
-              child: const Text("KHQR", style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("ABA KHQR", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                  Text("Tap to show QR code", style: TextStyle(color: Colors.blueGrey, fontSize: 11)),
-                ],
-              ),
-            ),
-            const Icon(Icons.keyboard_arrow_up, color: Colors.grey, size: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNoteBox() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GestureDetector(
-        onTap: _showCustomKeyboard,
-        child: Container(
-          height: 90, width: double.infinity,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: const Color(0xFFDADADA))),
-          child: Text(_noteText.isEmpty ? "Enter note" : _noteText, style: TextStyle(fontSize: 12, color: _noteText.isEmpty ? Colors.grey : Colors.black)),
-        ),
-      ),
-    );
-  }
+  // ================= UI BUILDERS (កែសម្រួលតាមរូបភាព) =================
 
   Widget _buildToggle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        height: 38,
-        decoration: BoxDecoration(color: const Color(0xFFD8D8DE), borderRadius: BorderRadius.circular(20)),
-        child: Row(
-          children: [
-            _toggleItem("Delivery", _isDeliverySelected, () => setState(() => _isDeliverySelected = true)),
-            _toggleItem("Pick Up", !_isDeliverySelected, () => setState(() => _isDeliverySelected = false)),
-          ],
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          _toggleItem("Delivery", _isDeliverySelected, () => setState(() => _isDeliverySelected = true)),
+          const SizedBox(width: 15),
+          _toggleItem("Pick Up", !_isDeliverySelected, () => setState(() => _isDeliverySelected = false)),
+        ],
       ),
     );
   }
@@ -259,10 +197,14 @@ class _PaymentPageState extends State<PaymentPage> {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.all(2),
-          decoration: BoxDecoration(color: active ? pinkColor : Colors.transparent, borderRadius: BorderRadius.circular(18)),
+          height: 45,
+          decoration: BoxDecoration(
+            color: active ? pinkColor : const Color(0xFFC4C4C4),
+            borderRadius: BorderRadius.circular(25),
+          ),
           alignment: Alignment.center,
-          child: Text(label, style: TextStyle(color: active ? Colors.white : Colors.grey, fontSize: 13, fontWeight: FontWeight.w600)),
+          child: Text(label,
+              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
         ),
       ),
     );
@@ -272,45 +214,97 @@ class _PaymentPageState extends State<PaymentPage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 52,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: const Color(0xFFE6E6E6))),
+        height: 65,
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
         child: Row(
           children: [
-            Icon(icon, size: 20, color: Colors.grey),
-            const SizedBox(width: 12),
-            Expanded(child: Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500))),
-            const Icon(Icons.chevron_right, color: Colors.grey, size: 18),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(color: Color(0xFFF1F5F9), shape: BoxShape.circle),
+              child: Icon(icon, size: 22, color: Colors.black87),
+            ),
+            const SizedBox(width: 15),
+            Expanded(child: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500))),
+            const Icon(Icons.chevron_right, color: Colors.grey, size: 22),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildNoteBox() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Note", style: TextStyle(color: Color(0xFF3F51B5), fontSize: 14, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: _showCustomKeyboard,
+            child: Container(
+              height: 120,
+              width: double.infinity,
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Text(
+                _noteText.isEmpty ? "Enter note" : _noteText,
+                style: TextStyle(fontSize: 14, color: _noteText.isEmpty ? Colors.grey.shade400 : Colors.black87),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildItemCard(Map item) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: const Color(0xFFE8E8E8))),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(item['image'] ?? '', width: 60, height: 60, fit: BoxFit.cover, errorBuilder: (c, e, s) => Container(width: 60, height: 60, color: Colors.pink.shade50, child: const Icon(Icons.image, color: Colors.pink))),
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset(item['image'] ?? '', width: 85, height: 85, fit: BoxFit.cover,
+                errorBuilder: (c, e, s) => Container(width: 85, height: 85, color: Colors.pink.shade50, child: const Icon(Icons.image, color: Colors.pink))),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item['name'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                const Text("Product description...", style: TextStyle(color: Colors.grey, fontSize: 10)),
-                Text("\$${(item['price'] ?? 0).toStringAsFixed(2)}", style: TextStyle(color: pinkColor, fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(item['name'] ?? '', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                const Text("Creates vivid face with gorgeous co...",
+                    style: TextStyle(color: Colors.grey, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
+                const Text("57.00 USD", style: TextStyle(color: Colors.grey, fontSize: 10, decoration: TextDecoration.lineThrough)),
+                const SizedBox(height: 5),
+                Text("\$${(item['price'] ?? 0).toStringAsFixed(2).replaceAll('.00', '')}",
+                    style: TextStyle(color: pinkColor, fontWeight: FontWeight.w900, fontSize: 24)),
               ],
             ),
           ),
-          Text("x${item['qty'] ?? 1}", style: const TextStyle(fontWeight: FontWeight.w500)),
+          Padding(
+            padding: const EdgeInsets.only(top: 25),
+            child: Text("x${item['qty'] ?? 1}", style: const TextStyle(fontSize: 20, color: Colors.black54)),
+          ),
         ],
       ),
     );
@@ -318,59 +312,90 @@ class _PaymentPageState extends State<PaymentPage> {
 
   Widget _buildPaymentSummary(double sub, double disc, double fee, double total) {
     row(String t, String v, {Color? c, bool b = false}) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(t, style: TextStyle(fontSize: b ? 15 : 12, fontWeight: b ? FontWeight.w700 : FontWeight.w400)),
-        Text(v, style: TextStyle(fontSize: b ? 15 : 12, fontWeight: b ? FontWeight.w700 : FontWeight.w400, color: c ?? Colors.black)),
+        Text(t, style: TextStyle(fontSize: b ? 18 : 14, fontWeight: b ? FontWeight.w900 : FontWeight.w500)),
+        Text(v, style: TextStyle(fontSize: b ? 16 : 14, fontWeight: b ? FontWeight.w900 : FontWeight.w500, color: c ?? Colors.black87)),
       ]),
     );
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
         children: [
           row("Sub total", "\$ ${sub.toStringAsFixed(2)}"),
-          row("Discount", "-\$ ${disc.toStringAsFixed(2)}", c: Colors.pinkAccent),
+          row("Discount", "-\$ ${disc.toStringAsFixed(2)}", c: Colors.pinkAccent.shade100),
           row("Birthday Discount", "-\$ 0.00", c: Colors.lightGreen),
           row("Member Discount(0.0%)", "-\$ 0.00"),
-          row("Delivery Fee", "\$ ${fee.toStringAsFixed(2)}"),
-          const Divider(),
+          row("Delivery Fee", "\$ ${fee.toInt()}"),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            child: Row(
+              children: List.generate(40, (index) => Expanded(
+                child: Container(color: index % 2 == 0 ? Colors.transparent : Colors.grey.shade200, height: 2),
+              )),
+            ),
+          ),
+
           row("TOTAL", "\$ ${total.toStringAsFixed(2)}", b: true),
+          const SizedBox(height: 20),
         ],
       ),
     );
   }
 
-  // UPDATED NAVIGATION LOGIC HERE
+  Widget _buildABAKHQRSection(double total) {
+    return GestureDetector(
+      onTap: () => _showQRModal(total),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: _isKHQRSelected ? pinkColor : Colors.grey.shade200),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 35, height: 35,
+              decoration: BoxDecoration(color: khqrRed, borderRadius: BorderRadius.circular(6)),
+              alignment: Alignment.center,
+              child: const Text("KHQR", style: TextStyle(color: Colors.white, fontSize: 7, fontWeight: FontWeight.bold)),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("ABA KHQR", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  Text("Scan to pay with any banking app", style: TextStyle(color: Colors.blueAccent, fontSize: 11)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.grey, size: 22),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildBottomPayButton(double total) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 25),
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
       child: SizedBox(
-        height: 50,
+        height: 55,
+        width: double.infinity,
         child: ElevatedButton(
-          onPressed: _isKHQRSelected ? () {
-            // Navigate to SuccessPage when "Pay Now" is clicked
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SuccessPage(totalAmount: total),
-              ),
-            );
-          } : null,
+          onPressed: _isKHQRSelected ? () => Navigator.push(context, MaterialPageRoute(builder: (context) => SuccessPage(totalAmount: total))) : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: _isKHQRSelected ? pinkColor : Colors.grey.shade300,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            elevation: _isKHQRSelected ? 2 : 0,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 0,
           ),
-          child: Text(
-              "PAY NOW",
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: _isKHQRSelected ? Colors.white : Colors.grey.shade600
-              )
-          ),
+          child: const Text("PAY NOW", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
         ),
       ),
     );

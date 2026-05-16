@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/router/app_router.dart'; // Ensure this path is correct
 
 class SuccessPage extends StatelessWidget {
   final double totalAmount;
@@ -7,6 +8,16 @@ class SuccessPage extends StatelessWidget {
     super.key,
     required this.totalAmount,
   });
+
+  /// Helper method to handle navigation back to home
+  void _navigateToHome(BuildContext context) {
+    // This clears the navigation stack so the user cannot "go back"
+    // into the checkout/payment process.
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      AppRouter.home, // Uses your defined route string
+          (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +32,15 @@ class SuccessPage extends StatelessWidget {
             ),
             child: Column(
               children: [
-
-                // Top text
+                // Top text (Breadcrumb style)
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "order_successful",
+                    "ORDER SUCCESSFUL",
                     style: TextStyle(
-                      color: Colors.grey.shade500,
+                      color: Colors.black,
                       fontSize: 12,
+                      letterSpacing: 1.1,
                     ),
                   ),
                 ),
@@ -43,11 +54,16 @@ class SuccessPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
                   ),
-
                   child: Column(
                     children: [
-
                       /// Illustration Box
                       Container(
                         height: 320,
@@ -60,17 +76,22 @@ class SuccessPage extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-
                         child: Image.asset(
                           "assets/images/success.png",
                           fit: BoxFit.contain,
+                          // Fallback if image is missing during development
+                          errorBuilder: (context, error, stackTrace) => const Icon(
+                            Icons.check_circle_outline,
+                            size: 100,
+                            color: Color(0xff4D9BE6),
+                          ),
                         ),
                       ),
 
                       const SizedBox(height: 25),
 
                       const Text(
-                        "Order successful",
+                        "Order Successful",
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -89,23 +110,18 @@ class SuccessPage extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-
                             _infoRow(
                               "Date",
                               "21/05/2026",
                             ),
-
                             const SizedBox(height: 12),
-
                             _infoRow(
-                              "Order number",
+                              "Order Number",
                               "009876",
                             ),
-
                             const SizedBox(height: 12),
-
                             _infoRow(
-                              "total payment",
+                              "Total Payment",
                               "\$${totalAmount.toStringAsFixed(2)}",
                               isBold: true,
                             ),
@@ -120,26 +136,20 @@ class SuccessPage extends StatelessWidget {
                         width: double.infinity,
                         height: 55,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context)
-                                .popUntil((route) => route.isFirst);
-                          },
+                          onPressed: () => _navigateToHome(context),
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            backgroundColor:
-                            const Color(0xff4D9BE6),
+                            backgroundColor: const Color(0xff4D9BE6),
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           child: const Text(
-                            "Continues",
+                            "Continue",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.white,
-                              fontWeight:
-                              FontWeight.w600,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -152,28 +162,21 @@ class SuccessPage extends StatelessWidget {
                         width: double.infinity,
                         height: 55,
                         child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.popUntil(
-                              context,
-                                  (route) => route.isFirst,
-                            );
-                          },
+                          onPressed: () => _navigateToHome(context),
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(
                               color: Colors.grey.shade300,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           child: const Text(
-                            "Back to home",
+                            "Back to Home",
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
-                              fontWeight:
-                              FontWeight.w600,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -182,11 +185,12 @@ class SuccessPage extends StatelessWidget {
                       const SizedBox(height: 18),
 
                       Text(
-                        "You have completed your payment.\nWe will deliver as soon as possible",
+                        "You have completed your payment.\nWe will deliver as soon as possible.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.shade500,
+                          height: 1.5,
                         ),
                       ),
                     ],
@@ -206,13 +210,12 @@ class SuccessPage extends StatelessWidget {
         bool isBold = false,
       }) {
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           title,
           style: const TextStyle(
-            color: Colors.grey,
+            color: Color(0xff5A5A5A),
             fontSize: 14,
           ),
         ),
@@ -220,9 +223,8 @@ class SuccessPage extends StatelessWidget {
           value,
           style: TextStyle(
             fontSize: 14,
-            fontWeight: isBold
-                ? FontWeight.bold
-                : FontWeight.w500,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+            color: Colors.black,
           ),
         ),
       ],

@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import '../widgets/Branch_widget.dart';
 
 class BranchScreen {
   static void showBranchOptions(
       BuildContext context,
       Function(String) onSelect,
       ) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      barrierDismissible: true,
       builder: (context) {
-        return const _BranchModal();
+        return const Dialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 28),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: _BranchModal(),
+        );
       },
     ).then((value) {
       if (value != null) {
@@ -21,7 +24,7 @@ class BranchScreen {
   }
 }
 
-// ================= MODAL UI =================
+// ================= POPUP UI =================
 
 class _BranchModal extends StatefulWidget {
   const _BranchModal();
@@ -31,184 +34,140 @@ class _BranchModal extends StatefulWidget {
 }
 
 class _BranchModalState extends State<_BranchModal> {
-  String selectedBranch = "";
-
   final List<Map<String, String>> branches = [
     {
       "name": "ES@SMC",
-      "address":
-      "1B - 2B, 217, Steung Mean Chey 2, Mean Chey, Phnom Penh"
+      "address": "1B - 2B, 217, Steung Mean Chey 2 ,\nMean Chey , Phnom Penh"
     },
     {
       "name": "ES@PSW",
-      "address":
-      "1B - 2B, 217, Steung Mean Chey 2, Mean Chey, Phnom Penh"
+      "address": "1B - 2B, 217, Steung Mean Chey 2 ,\nMean Chey , Phnom Penh"
     },
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.65,
-      decoration: const BoxDecoration(
+      padding: const EdgeInsets.only(top: 24, bottom: 12),
+      decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+        borderRadius: BorderRadius.circular(28),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 🔹 Drag Indicator
-          const SizedBox(height: 10),
-          Container(
-            width: 50,
-            height: 5,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-
           // 🔹 Header
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Choose Branch",
+                  "Branch Options",
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.3,
+                    color: Colors.black87,
                   ),
                 ),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.close, color: Colors.grey),
+                  child: const Icon(
+                    Icons.highlight_off,
+                    color: Colors.black54,
+                    size: 26,
+                  ),
                 ),
               ],
             ),
           ),
 
-          const Divider(height: 1),
+          const SizedBox(height: 24),
 
-          // 🔹 Branch List
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(20),
-              itemCount: branches.length,
-              itemBuilder: (context, index) {
-                final branch = branches[index];
-                final isSelected = selectedBranch == branch["name"];
-
+          // 🔹 Branch List Layout
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: branches.map((branch) {
                 return GestureDetector(
                   onTap: () {
-                    setState(() {
-                      selectedBranch = branch["name"]!;
-                    });
+                    Navigator.pop(context, branch["name"]);
                   },
                   child: Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    padding: const EdgeInsets.all(15),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? const Color(0xFFFFF0F5)
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isSelected
-                            ? const Color(0xFFFF2D6C)
-                            : Colors.grey.shade300,
-                        width: 1.5,
+                        color: const Color(0xFFE2E8F0),
+                        width: 1.2,
                       ),
                       boxShadow: [
-                        if (!isSelected)
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.03),
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.015),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
                       ],
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // 🔹 Icon
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? const Color(0xFFFF2D6C)
-                                : Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            Icons.store,
-                            color: isSelected
-                                ? Colors.white
-                                : Colors.black87,
+                        // 🔹 Fixed Image Caller Setup
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4, right: 16),
+                          child: SizedBox(
+                            width: 54,
+                            height: 54,
+                            child: Image.asset(
+                              "assets/images/shopping bag.png",
+                              fit: BoxFit.contain,
+                              // If your asset doesn't load immediately or has an issue,
+                              // this placeholder prevents your app from crashing:
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.shopping_bag, size: 44, color: Colors.blue);
+                              },
+                            ),
                           ),
                         ),
 
-                        const SizedBox(width: 15),
-
-                        // 🔹 Text
+                        // 🔹 Branch Names & Locations Text
                         Expanded(
                           child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 branch["name"]!,
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16.5,
+                                  color: Color(0xFF5A6672),
+                                  letterSpacing: -0.2,
                                 ),
                               ),
                               const SizedBox(height: 5),
                               Text(
                                 branch["address"]!,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey.shade600,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFFA0AEC0),
+                                  height: 1.35,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 0.1,
                                 ),
                               ),
                             ],
                           ),
                         ),
-
-                        // 🔹 Selected Icon
-                        if (isSelected)
-                          const Icon(Icons.check_circle,
-                              color: Color(0xFFFF2D6C)),
                       ],
                     ),
                   ),
                 );
-              },
-            ),
-          ),
-
-          // 🔹 Confirm Button
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                onPressed: selectedBranch.isEmpty
-                    ? null
-                    : () => Navigator.pop(context, selectedBranch),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF2D6C),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  "CONFIRM",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1),
-                ),
-              ),
+              }).toList(),
             ),
           ),
         ],

@@ -19,69 +19,65 @@ class KeyboardWidget extends StatefulWidget {
 class _KeyboardWidgetState extends State<KeyboardWidget> {
   bool isUpperCase = false;
 
-  /// Toggle shift safely
   void _toggleShift() {
     setState(() {
       isUpperCase = !isUpperCase;
     });
   }
 
-  /// Get correct letter case
   String _applyCase(String key) {
     return isUpperCase ? key.toUpperCase() : key;
   }
 
-  /// Build normal key
-  Widget _key(String k) {
+  /// Base template for every key capturing the 3D-like tactile button shadow
+  Widget _baseKey({
+    required Widget child,
+    required VoidCallback onTap,
+    required Color color,
+    int flex = 10,
+  }) {
     return Expanded(
+      flex: flex,
       child: Padding(
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 6),
         child: GestureDetector(
-          onTap: () {
-            widget.onKeyTap(_applyCase(k));
-          },
+          onTap: onTap,
           child: Container(
-            height: 48,
+            height: 44,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F3F6),
-              borderRadius: BorderRadius.circular(8),
+              color: color,
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0xFF84868A),
+                  offset: Offset(0, 1),
+                  blurRadius: 0,
+                  spreadRadius: 0,
+                ),
+              ],
             ),
-            child: Text(
-              _applyCase(k),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            child: child,
           ),
         ),
       ),
     );
   }
 
-  /// Build special key (shift/delete/etc.)
-  Widget _special({
-    required Widget child,
-    required VoidCallback onTap,
-    Color? color,
-    int flex = 1,
-  }) {
-    return Expanded(
-      flex: flex,
-      child: Padding(
-        padding: const EdgeInsets.all(3),
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            height: 48,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: color ?? const Color(0xFFE0E3E8),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: child,
-          ),
+  /// Alphanumeric Character Keys
+  Widget _letterKey(String letter) {
+    final displayLetter = _applyCase(letter);
+    return _baseKey(
+      flex: 10,
+      color: Colors.white,
+      onTap: () => widget.onKeyTap(displayLetter),
+      child: Text(
+        displayLetter,
+        style: const TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w300,
+          color: Colors.black,
+          letterSpacing: -0.5,
         ),
       ),
     );
@@ -93,66 +89,133 @@ class _KeyboardWidgetState extends State<KeyboardWidget> {
     final row2 = "asdfghjkl".split("");
     final row3 = "zxcvbnm".split("");
 
+    // Exact slate/grey color from the image for functional keys
+    const Color controlKeyBg = Color(0xFFA8B0BC);
+
     return Container(
-      color: const Color(0xFFD1D5DB),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// Row 1
-          Row(children: row1.map(_key).toList()),
-
-          /// Row 2
-          Row(children: row2.map(_key).toList()),
-
-          /// Row 3 (SHIFT + letters + DELETE)
-          Row(
+      color: const Color(0xFFF2F3F5),
+      width: double.infinity,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              _special(
-                onTap: _toggleShift,
-                color: isUpperCase
-                    ? const Color(0xFF4A90E2) // active
-                    : const Color(0xFFE0E3E8),
-                child: Icon(
-                  Icons.keyboard_capslock,
-                  color: isUpperCase ? Colors.white : Colors.black,
+              const SizedBox(height: 8),
+
+              /// ================= ROW 1 =================
+              Row(
+                children: row1.map(_letterKey).toList(),
+              ),
+
+              /// ================= ROW 2 =================
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: Row(
+                  children: row2.map(_letterKey).toList(),
                 ),
               ),
 
-              ...row3.map(_key),
+              /// ================= ROW 3 =================
+              Row(
+                children: [
+                  // Shift Key
+                  _baseKey(
+                    flex: 14,
+                    color: isUpperCase ? Colors.white : controlKeyBg,
+                    onTap: _toggleShift,
+                    child: Icon(
+                      Icons.arrow_upward_outlined,
+                      color: Colors.black,
+                      size: 22,
+                    ),
+                  ),
 
-              _special(
-                onTap: widget.onDelete,
-                child: const Icon(Icons.backspace),
-              ),
-            ],
-          ),
+                  ...row3.map(_letterKey),
 
-          /// Bottom Row
-          Row(
-            children: [
-              _special(
-                flex: 2,
-                onTap: () {},
-                child: const Text("123"),
+                  // Backspace / Delete Key
+                  _baseKey(
+                    flex: 14,
+                    color: controlKeyBg,
+                    onTap: widget.onDelete,
+                    child: const Icon(
+                      Icons.backspace_outlined,
+                      color: Colors.black,
+                      size: 20,
+                    ),
+                  ),
+                ],
               ),
-              _special(
-                flex: 5,
-                onTap: () => widget.onKeyTap(" "),
-                color: Colors.white,
-                child: const Text("space"),
+
+              /// ================= ROW 4 =================
+              Row(
+                children: [
+                  // '123' Option Switcher
+                  _baseKey(
+                    flex: 25,
+                    color: controlKeyBg,
+                    onTap: () {},
+                    child: const Text(
+                      "123",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                  // Spacebar
+                  _baseKey(
+                    flex: 54,
+                    color: Colors.white,
+                    onTap: () => widget.onKeyTap(" "),
+                    child: const Text(
+                      "space",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
+                  // Return Key
+                  _baseKey(
+                    flex: 25,
+                    color: controlKeyBg,
+                    onTap: widget.onDone,
+                    child: const Text(
+                      "return",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              _special(
-                flex: 2,
-                onTap: widget.onDone,
-                color: const Color(0xFF4A90E2),
-                child: const Text(
-                  "return",
-                  style: TextStyle(color: Colors.white),
+
+              /// ================= BOTTOM ROW (Emoji + Space Spacer) =================
+              Padding(
+                padding: const EdgeInsets.only(left: 16, top: 10, bottom: 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: const Icon(
+                      Icons.sentiment_satisfied_alt_outlined,
+                      color: Color(0xFF5A5A5A),
+                      size: 30,
+                    ),
+                  ),
                 ),
               ),
+
+              const SizedBox(height: 6),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

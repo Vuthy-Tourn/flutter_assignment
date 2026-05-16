@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+
+import '../../../../core/router/app_router.dart';
 import '../widgets/cart_widget.dart';
 import '../../../home/presentation/widgets/bottom_nav_bar.dart';
-import '../../../../core/router/app_router.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -11,45 +11,94 @@ class CartScreen extends StatefulWidget {
   State<CartScreen> createState() => _CartScreenState();
 }
 
+/// ================= MODEL =================
+
+class CartItemModel {
+  final String name;
+  final double price;
+  final double oldPrice;
+  final String image;
+
+  int quantity;
+  bool isSelected;
+
+  CartItemModel({
+    required this.name,
+    required this.price,
+    required this.oldPrice,
+    required this.image,
+    this.quantity = 1,
+    this.isSelected = true,
+  });
+}
+
+/// ================= SCREEN =================
+
 class _CartScreenState extends State<CartScreen> {
   int currentIndex = 1;
 
-  final List<Map<String, dynamic>> items = [
-    {
-      'name': 'Blush',
-      'price': 18.7,
-      'oldPrice': 70.0,
-      'qty': 1,
-      'selected': true,
-      'image': 'assets/images/option2.png',
-    },
-    {
-      'name': 'Sunscreen',
-      'price': 10.0,
-      'oldPrice': 70.0,
-      'qty': 1,
-      'selected': true,
-      'image': 'assets/images/product_gallery_2.png',
-    },
+  final List<CartItemModel> items = [
+    CartItemModel(
+      name: 'Blush',
+      price: 18.7,
+      oldPrice: 70,
+      image: 'assets/images/option2.png',
+    ),
+    CartItemModel(
+      name: 'Sunscreen',
+      price: 10,
+      oldPrice: 70,
+      image: 'assets/images/product_gallery_2.png',
+    ),
   ];
 
-  // ── LOGIC (រក្សាទុកទម្រង់ដើម) ───────────────────────────
+  /// ================= GETTERS =================
 
   double get total => items
-      .where((e) => e['selected'] == true)
-      .fold(0, (sum, e) => sum + (e['price'] * e['qty']));
+      .where((item) => item.isSelected)
+      .fold(0, (sum, item) => sum + (item.price * item.quantity));
 
-  int get selectedCount => items.where((e) => e['selected'] == true).length;
+  int get selectedCount =>
+      items.where((item) => item.isSelected).length;
 
-  bool get isAllSelected => items.every((e) => e['selected'] == true);
+  bool get isAllSelected =>
+      items.isNotEmpty &&
+          items.every((item) => item.isSelected);
 
   bool get hasSelectedItems => selectedCount > 0;
 
-  void _toggleSelectAll(bool? val) {
+  /// ================= LOGIC =================
+
+  void _toggleSelectAll(bool? value) {
     setState(() {
-      for (var item in items) {
-        item['selected'] = val ?? false;
+      for (final item in items) {
+        item.isSelected = value ?? false;
       }
+    });
+  }
+
+  void _removeSelectedItems() {
+    setState(() {
+      items.removeWhere((item) => item.isSelected);
+    });
+  }
+
+  void _incrementQty(CartItemModel item) {
+    setState(() => item.quantity++);
+  }
+
+  void _decrementQty(CartItemModel item) {
+    if (item.quantity > 1) {
+      setState(() => item.quantity--);
+    }
+  }
+
+  void _toggleItemSelection(
+      CartItemModel item,
+      bool? value,
+      ) {
+    setState(() {
+      item.isSelected = value ?? false;
     });
   }
 
@@ -60,55 +109,61 @@ class _CartScreenState extends State<CartScreen> {
       case 0:
         Navigator.pushNamed(context, AppRouter.home);
         break;
+
       case 1:
         break;
+
       case 2:
         Navigator.pushNamed(context, AppRouter.order);
         break;
+
       case 3:
         Navigator.pushNamed(context, AppRouter.inbox);
         break;
+
       case 4:
         Navigator.pushNamed(context, AppRouter.profile);
         break;
     }
   }
 
-  // ── UI ─────────────────────────────────────────────
+  void _goToPayment() {
+    final selectedItems = items
+        .where((item) => item.isSelected)
+        .map(
+          (item) => {
+        'name': item.name,
+        'price': item.price,
+        'qty': item.quantity,
+        'image': item.image,
+      },
+    )
+        .toList();
+
+    Navigator.pushNamed(
+      context,
+      AppRouter.payment,
+      arguments: selectedItems,
+    );
+  }
+
+  /// ================= UI =================
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // ប្តូរជាពណ៌សដើម្បីឱ្យស៊ីជាមួយ Design ថ្មី
-      appBar: AppBar(
-        title: const Text(
-          "Cart",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search_outlined, color: Colors.pinkAccent),
-            onPressed: () => Navigator.pushNamed(context, AppRouter.search),
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications_none_outlined,
-                color: Colors.pinkAccent),
-            onPressed: () => Navigator.pushNamed(context, AppRouter.inbox),
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
+      backgroundColor: Colors.white,
+
+      appBar: _buildAppBar(),
+
       body: Column(
         children: [
-          _buildSelectAllRow(),
+          SelectAllRow(
+            isAllSelected: isAllSelected,
+            onSelectAll: _toggleSelectAll,
+            onDelete: _removeSelectedItems,
+          ),
 
-          /// 🛒 CART LIST
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -117,32 +172,33 @@ class _CartScreenState extends State<CartScreen> {
                 final item = items[index];
 
                 return CartItemCard(
-                  title: item['name'],
-                  price: item['price'],
-                  oldPrice: item['oldPrice'],
-                  quantity: item['qty'],
-                  isSelected: item['selected'],
-                  imagePath: item['image'],
-                  onIncrement: () => setState(() => item['qty']++),
-                  onDecrement: () {
-                    if (item['qty'] > 1) {
-                      setState(() => item['qty']--);
-                    }
-                  },
-                  onToggleSelect: (val) {
-                    setState(() {
-                      item['selected'] = val ?? false;
-                    });
-                  },
+                  title: item.name,
+                  price: item.price,
+                  oldPrice: item.oldPrice,
+                  quantity: item.quantity,
+                  isSelected: item.isSelected,
+                  imagePath: item.image,
+
+                  onIncrement: () => _incrementQty(item),
+
+                  onDecrement: () => _decrementQty(item),
+
+                  onToggleSelect: (value) =>
+                      _toggleItemSelection(item, value),
                 );
               },
             ),
           ),
 
-          /// 💳 ផ្នែកដែលបាន DESIGN ថ្មីតាមរូបភាព image_85e178.png
-          _buildBottomCheckout(),
+          CheckoutSection(
+            total: total,
+            selectedCount: selectedCount,
+            enabled: hasSelectedItems,
+            onTap: _goToPayment,
+          ),
         ],
       ),
+
       bottomNavigationBar: BottomNavBar(
         currentIndex: currentIndex,
         onTap: _onNavTap,
@@ -150,92 +206,180 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  /// 🔘 SELECT ALL ROW
-  Widget _buildSelectAllRow() {
+  /// ================= APP BAR =================
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: true,
+
+      title: const Text(
+        'Cart',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+
+      actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.search_outlined,
+            color: Colors.pinkAccent,
+          ),
+          onPressed: () {
+            Navigator.pushNamed(context, AppRouter.search);
+          },
+        ),
+
+        IconButton(
+          icon: const Icon(
+            Icons.notifications_none_outlined,
+            color: Colors.pinkAccent,
+          ),
+          onPressed: () {
+            Navigator.pushNamed(context, AppRouter.inbox);
+          },
+        ),
+
+        const SizedBox(width: 8),
+      ],
+    );
+  }
+}
+
+/// ================= SELECT ALL ROW =================
+
+class SelectAllRow extends StatelessWidget {
+  final bool isAllSelected;
+  final ValueChanged<bool?> onSelectAll;
+  final VoidCallback onDelete;
+
+  const SelectAllRow({
+    super.key,
+    required this.isAllSelected,
+    required this.onSelectAll,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
+      ),
       child: Row(
         children: [
           Checkbox(
             value: isAllSelected,
             activeColor: Colors.pinkAccent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-            onChanged: _toggleSelectAll,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            onChanged: onSelectAll,
           ),
+
           const Text(
-            "Select all",
-            style: TextStyle(color: Colors.grey, fontSize: 16),
+            'Select all',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
           ),
+
           const Spacer(),
+
           IconButton(
-            icon: const Icon(Icons.delete_outline, color: Colors.grey),
-            onPressed: () {
-              setState(() {
-                items.removeWhere((e) => e['selected'] == true);
-              });
-            },
+            icon: const Icon(
+              Icons.delete_outline,
+              color: Colors.grey,
+            ),
+            onPressed: onDelete,
           ),
         ],
       ),
     );
   }
+}
 
-  /// 💳 BOTTOM CHECKOUT (Design Updated to match image_85e178.png)
-  Widget _buildBottomCheckout() {
+/// ================= CHECKOUT SECTION =================
+
+class CheckoutSection extends StatelessWidget {
+  final double total;
+  final int selectedCount;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  const CheckoutSection({
+    super.key,
+    required this.total,
+    required this.selectedCount,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
       child: InkWell(
-        onTap: hasSelectedItems ? _goToPayment : null,
+        onTap: enabled ? onTap : null,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          width: double.infinity,
           height: 75,
+          width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: hasSelectedItems ? const Color(0xFFFF2D6C) : Colors.grey[400],
+            color: enabled
+                ? const Color(0xFFFF2D6C)
+                : Colors.grey[400],
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
             children: [
-              // ផ្នែកអក្សរខាងឆ្វេង: Place order (2)
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Text(
-                    "Place order ",
+                    'Place order ',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
+
                   Text(
-                    "($selectedCount)",
+                    '($selectedCount)',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
-                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
               ),
 
-              // ផ្នែកតម្លៃខាងស្តាំ: Sub total / $ 28.70
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                crossAxisAlignment:
+                CrossAxisAlignment.end,
                 children: [
                   const Text(
-                    "Sub total",
+                    'Sub total',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
                     ),
                   ),
+
                   const SizedBox(height: 2),
+
                   Text(
-                    "\$ ${total.toStringAsFixed(2)}",
+                    '\$ ${total.toStringAsFixed(2)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -248,24 +392,6 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  void _goToPayment() {
-    final selectedItems = items
-        .where((e) => e['selected'] == true)
-        .map((e) => {
-      'name': e['name'],
-      'price': e['price'],
-      'qty': e['qty'],
-      'image': e['image'],
-    })
-        .toList();
-
-    Navigator.pushNamed(
-      context,
-      AppRouter.payment,
-      arguments: selectedItems,
     );
   }
 }

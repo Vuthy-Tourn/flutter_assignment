@@ -3,19 +3,23 @@ import 'package:flutter/material.dart';
 class AddressScreen extends StatelessWidget {
   const AddressScreen({super.key});
 
+  static const Color primaryColor = Color(0xFFFF2D6C);
+  static const Color dividerColor = Color(0xFFE5E5E5);
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Colors.white, // Pure white background matching the UI
-      appBar: _AddressAppBar(),
+      backgroundColor: Colors.white,
+      appBar: AddressAppBar(),
       body: AddressPage(),
     );
   }
 }
 
-/// ---------------- APP BAR ----------------
-class _AddressAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const _AddressAppBar();
+/// ================= APP BAR =================
+class AddressAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  const AddressAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +28,19 @@ class _AddressAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       centerTitle: true,
       leading: IconButton(
-        // Pink chevron-left icon matching UI
-        icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFFF2D6C), size: 24),
+        icon: const Icon(
+          Icons.arrow_back_ios,
+          color: AddressScreen.primaryColor,
+          size: 22,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
       title: const Text(
-        "My Address",
+        'My Address',
         style: TextStyle(
-          color: Color(0xFF161F30),
           fontSize: 22,
           fontWeight: FontWeight.bold,
+          color: Color(0xFF161F30),
         ),
       ),
     );
@@ -43,7 +50,7 @@ class _AddressAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
-/// ---------------- BODY ----------------
+/// ================= BODY =================
 class AddressPage extends StatelessWidget {
   const AddressPage({super.key});
 
@@ -52,52 +59,74 @@ class AddressPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: const [
-        // Top full-width divider under App Bar
-        Divider(height: 1, thickness: 0.5, color: Color(0xFFE5E5E5)),
-
-        /// List of Options (Plain flat list style, not a card)
-        _LocationOption(
-          icon: Icons.my_location, // Targeted GPS/Location style icon
-          title: "Use Current Location (Using GPS)",
+        Divider(
+          height: 1,
+          thickness: 0.5,
+          color: AddressScreen.dividerColor,
         ),
-        Divider(height: 1, thickness: 0.5, color: Color(0xFFE5E5E5), indent: 16),
 
-        _LocationOption(
-          icon: Icons.map_outlined, // Map outline icon
-          title: "Choose map",
+        AddressOptionTile(
+          icon: Icons.my_location,
+          title: 'Use Current Location (Using GPS)',
         ),
-        Divider(height: 1, thickness: 0.5, color: Color(0xFFE5E5E5)),
 
-        /// Section Title
-        _SectionTitle(title: "Saved Location"),
+        Divider(
+          height: 1,
+          thickness: 0.5,
+          indent: 16,
+          color: AddressScreen.dividerColor,
+        ),
 
-        /// Empty State Section
-        Expanded(child: _EmptyState()),
+        AddressOptionTile(
+          icon: Icons.map_outlined,
+          title: 'Choose map',
+        ),
+
+        Divider(
+          height: 1,
+          thickness: 0.5,
+          color: AddressScreen.dividerColor,
+        ),
+
+        SectionTitle(title: 'Saved Location'),
+
+        Expanded(
+          child: EmptyAddressState(),
+        ),
       ],
     );
   }
 }
 
-/// ---------------- LOCATION OPTION ----------------
-class _LocationOption extends StatelessWidget {
+/// ================= OPTION TILE =================
+class AddressOptionTile extends StatelessWidget {
   final IconData icon;
   final String title;
+  final VoidCallback? onTap;
 
-  const _LocationOption({
+  const AddressOptionTile({
+    super.key,
     required this.icon,
     required this.title,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
         child: Row(
           children: [
-            // Standard crisp icon styling directly on text track
-            Icon(icon, color: const Color(0xFFFF2D6C), size: 24),
+            Icon(
+              icon,
+              size: 24,
+              color: AddressScreen.primaryColor,
+            ),
 
             const SizedBox(width: 16),
 
@@ -112,7 +141,11 @@ class _LocationOption extends StatelessWidget {
               ),
             ),
 
-            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black26),
+            const Icon(
+              Icons.arrow_forward_ios,
+              size: 14,
+              color: Colors.black26,
+            ),
           ],
         ),
       ),
@@ -120,16 +153,23 @@ class _LocationOption extends StatelessWidget {
   }
 }
 
-/// ---------------- SECTION TITLE ----------------
-class _SectionTitle extends StatelessWidget {
+/// ================= SECTION TITLE =================
+class SectionTitle extends StatelessWidget {
   final String title;
 
-  const _SectionTitle({required this.title});
+  const SectionTitle({
+    super.key,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20, top: 40, bottom: 16),
+      padding: const EdgeInsets.only(
+        left: 20,
+        top: 40,
+        bottom: 16,
+      ),
       child: Text(
         title,
         style: const TextStyle(
@@ -142,9 +182,9 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-/// ---------------- EMPTY STATE ----------------
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+/// ================= EMPTY STATE =================
+class EmptyAddressState extends StatelessWidget {
+  const EmptyAddressState({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -152,25 +192,22 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
-          // Pin outline marker with a center question mark icon
           Icon(
             Icons.add_location_alt_outlined,
             size: 56,
-            color: Color(0xFFFF2D6C),
+            color: AddressScreen.primaryColor,
           ),
 
           SizedBox(height: 24),
 
           Text(
-            "No location Address",
+            'No location Address',
             style: TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w400,
               color: Colors.black87,
             ),
           ),
 
-          // Added spacing underneath to organically push the group slightly upwards
           SizedBox(height: 80),
         ],
       ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/router/app_router.dart';
+
+import '../widgets/QR_widget.dart';
+
 import 'Vocher.dart';
-import '../widgets/keyboard_widget.dart';
-import '../widgets/QR_widget.dart'; // Corrected path
 import 'delivery_screen.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -12,45 +14,129 @@ class PaymentPage extends StatefulWidget {
   State<PaymentPage> createState() => _PaymentPageState();
 }
 
-class _PaymentPageState extends State<PaymentPage> {
-  String _noteText = "";
-  String _selectedDeliveryMethod = "Delivery Method";
+/// ================= CONSTANTS =================
 
-  void _showPaymentModal(double totalAmount) {
-    // Dismiss keyboard if open
+class PaymentColors {
+  static const primary = Color(0xFFFF2D6C);
+  static const darkPrimary = Color(0xFF8E1439);
+  static const khqrRed = Color(0xFFD00000);
+}
+
+/// ================= SCREEN =================
+
+class _PaymentPageState extends State<PaymentPage> {
+  String noteText = '';
+  String selectedDeliveryMethod =
+      'Delivery Method';
+
+  /// ================= GETTERS =================
+
+  List<Map<String, dynamic>> get items {
+    final raw =
+        ModalRoute.of(context)?.settings.arguments;
+
+    return raw != null
+        ? List<Map<String, dynamic>>.from(
+      raw as List,
+    )
+        : [];
+  }
+
+  double get subtotal {
+    return items.fold(
+      0,
+          (sum, item) =>
+      sum +
+          ((item['price'] ?? 0) *
+              (item['qty'] ?? 1)),
+    );
+  }
+
+  double get discount => 6.20;
+
+  double get deliveryFee => 1.00;
+
+  double get total =>
+      subtotal - discount + deliveryFee;
+
+  /// ================= LOGIC =================
+
+  Future<void> _selectDeliveryMethod() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const DeliveryScreen(),
+      ),
+    );
+
+    if (result != null && result is String) {
+      setState(() {
+        selectedDeliveryMethod = result;
+      });
+    }
+  }
+
+  void _showPaymentModal() {
     FocusScope.of(context).unfocus();
 
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
-      barrierLabel: "Dismiss",
+      barrierLabel: 'Dismiss',
       barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 200),
-      pageBuilder: (context, anim1, anim2) {
+      transitionDuration:
+      const Duration(milliseconds: 200),
+
+      pageBuilder: (_, __, ___) {
         return Scaffold(
           backgroundColor: Colors.transparent,
+
           body: Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding:
+              const EdgeInsets.symmetric(
+                horizontal: 24,
+              ),
+
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+
                 children: [
                   QRWidget(
-                    qrData: "Your_KHQR_String_Payload",
-                    merchantName: "Eternal Shine",
-                    amount: totalAmount,
+                    qrData:
+                    'Your_KHQR_String_Payload',
+                    merchantName:
+                    'Eternal Shine',
+                    amount: total,
                   ),
+
                   const SizedBox(height: 24),
-                  // ABA Mini Card
-                  _buildModalABACard(),
+
+                  const ModalABACard(),
+
                   const SizedBox(height: 16),
-                  // Final Modal Button
-                  _buildModalPayButton(),
+
+                  ModalPayButton(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+
                   const SizedBox(height: 20),
+
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("CLOSE", style: TextStyle(color: Colors.white)),
-                  )
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+
+                    child: const Text(
+                      'CLOSE',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -60,95 +146,361 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
+  /// ================= UI =================
+
   @override
   Widget build(BuildContext context) {
-    final raw = ModalRoute.of(context)?.settings.arguments;
-    final items = raw != null ? List<Map<String, dynamic>>.from(raw as List) : [];
-
-    // Logic for calculation
-    double subtotal = items.fold(0, (sum, item) => sum + ((item['price'] ?? 0) * (item['qty'] ?? 1)));
-    double total = subtotal - 6.20 + 1.00; // Sample calc
-    const pinkColor = Color(0xFFFF2D6C);
-
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text("Payment", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        centerTitle: true,
-      ),
+
+      appBar: _buildAppBar(),
+
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 120),
+        padding:
+        const EdgeInsets.only(bottom: 120),
+
         child: Column(
           children: [
-            // (Your existing delivery/voucher widgets here)
-            _buildActionTile(Icons.local_shipping_outlined, _selectedDeliveryMethod),
-            _buildPaymentSummary(subtotal, 6.20, total),
-            _buildABATile(),
+            PaymentActionTile(
+              icon:
+              Icons.local_shipping_outlined,
+              title:
+              selectedDeliveryMethod,
+              onTap:
+              _selectDeliveryMethod,
+            ),
+
+            PaymentSummary(
+              subtotal: subtotal,
+              discount: discount,
+              total: total,
+            ),
+
+            const ABATile(),
           ],
         ),
       ),
-      bottomNavigationBar: _buildMainPayButton(pinkColor, total),
-    );
-  }
 
-  // --- Main Button ---
-  Widget _buildMainPayButton(Color color, double totalAmount) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
-      decoration: const BoxDecoration(
-          color: Colors.white, border: Border(top: BorderSide(color: Color(0xFFF5F5F5)))),
-      child: ElevatedButton(
-        onPressed: () => _showPaymentModal(totalAmount),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          minimumSize: const Size(double.infinity, 54),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        child: const Text("PAY NOW", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      bottomNavigationBar:
+      MainPayButton(
+        total: total,
+        onTap: _showPaymentModal,
       ),
     );
   }
 
-  // --- UI Components for the Modal ---
-  Widget _buildModalABACard() {
+  /// ================= APP BAR =================
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: true,
+
+      title: const Text(
+        'Payment',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
+
+/// ================= MAIN PAY BUTTON =================
+
+class MainPayButton extends StatelessWidget {
+  final double total;
+  final VoidCallback onTap;
+
+  const MainPayButton({
+    super.key,
+    required this.total,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding:
+      const EdgeInsets.fromLTRB(
+        20,
+        10,
+        20,
+        30,
+      ),
+
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(
+            color: Color(0xFFF5F5F5),
+          ),
+        ),
+      ),
+
+      child: ElevatedButton(
+        onPressed: onTap,
+
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+          PaymentColors.primary,
+
+          minimumSize:
+          const Size(double.infinity, 54),
+
+          shape:
+          RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(10),
+          ),
+        ),
+
+        child: const Text(
+          'PAY NOW',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// ================= MODAL ABA CARD =================
+
+class ModalABACard extends StatelessWidget {
+  const ModalABACard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius:
+        BorderRadius.circular(12),
+      ),
+
       child: Row(
         children: [
           Container(
-            width: 40, height: 40,
-            decoration: BoxDecoration(color: const Color(0xFFD00000), borderRadius: BorderRadius.circular(8)),
-            child: const Center(child: Text("KHQR", style: TextStyle(color: Colors.white, fontSize: 8))),
+            width: 40,
+            height: 40,
+
+            decoration: BoxDecoration(
+              color: PaymentColors.khqrRed,
+              borderRadius:
+              BorderRadius.circular(8),
+            ),
+
+            child: const Center(
+              child: Text(
+                'KHQR',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                ),
+              ),
+            ),
           ),
+
           const SizedBox(width: 12),
-          const Text("ABA KHQR", style: TextStyle(fontWeight: FontWeight.bold)),
+
+          const Text(
+            'ABA KHQR',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
           const Spacer(),
-          const Icon(Icons.chevron_right, color: Colors.grey),
+
+          const Icon(
+            Icons.chevron_right,
+            color: Colors.grey,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// ================= MODAL PAY BUTTON =================
+
+class ModalPayButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const ModalPayButton({
+    super.key,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 55,
+
+      child: ElevatedButton(
+        onPressed: onTap,
+
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+          PaymentColors.darkPrimary,
+
+          shape:
+          RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(8),
+          ),
+        ),
+
+        child: const Text(
+          'PAY NOW',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// ================= PAYMENT ACTION TILE =================
+
+class PaymentActionTile
+    extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback? onTap;
+
+  const PaymentActionTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: onTap,
+    );
+  }
+}
+
+/// ================= ABA TILE =================
+
+class ABATile extends StatelessWidget {
+  const ABATile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(20),
+
+      child: Text(
+        'ABA KHQR Selected',
+      ),
+    );
+  }
+}
+
+/// ================= PAYMENT SUMMARY =================
+
+class PaymentSummary extends StatelessWidget {
+  final double subtotal;
+  final double discount;
+  final double total;
+
+  const PaymentSummary({
+    super.key,
+    required this.subtotal,
+    required this.discount,
+    required this.total,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:
+      const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 10,
+      ),
+
+      child: Column(
+        children: [
+          _row(
+            'Subtotal',
+            '\$${subtotal.toStringAsFixed(2)}',
+          ),
+
+          _row(
+            'Discount',
+            '-\$${discount.toStringAsFixed(2)}',
+          ),
+
+          const Divider(height: 30),
+
+          _row(
+            'Total',
+            '\$${total.toStringAsFixed(2)}',
+            isBold: true,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildModalPayButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 55,
-      child: ElevatedButton(
-        onPressed: () => Navigator.pop(context),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF8E1439), // Darker red from image
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: const Text("PAY NOW", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+  Widget _row(
+      String title,
+      String value, {
+        bool isBold = false,
+      }) {
+    return Padding(
+      padding:
+      const EdgeInsets.symmetric(
+        vertical: 6,
+      ),
+
+      child: Row(
+        mainAxisAlignment:
+        MainAxisAlignment.spaceBetween,
+
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize:
+              isBold ? 18 : 14,
+              fontWeight:
+              isBold
+                  ? FontWeight.bold
+                  : FontWeight.w500,
+            ),
+          ),
+
+          Text(
+            value,
+            style: TextStyle(
+              fontSize:
+              isBold ? 18 : 14,
+              fontWeight:
+              isBold
+                  ? FontWeight.bold
+                  : FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
-
-  // --- Placeholders for your other existing UI ---
-  Widget _buildActionTile(IconData i, String t) => ListTile(leading: Icon(i), title: Text(t));
-  Widget _buildABATile() => const Padding(padding: EdgeInsets.all(20), child: Text("ABA KHQR Selected"));
-  Widget _buildPaymentSummary(double s, double d, double t) => Text("Total: $t");
 }

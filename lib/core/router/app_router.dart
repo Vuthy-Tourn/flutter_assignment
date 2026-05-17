@@ -21,9 +21,10 @@ class AppRouter {
 
   // ── Category ──────────────────────────────────────────────────────────
   static const String category = '/category';
-
-  // ── Cart → Payment ────────────────────────────────────────────────────
-  // Receives List<Map<String,dynamic>> as arguments from CartScreen:
-  //   Navigator.pushNamed(context, AppRouter.payment, arguments: selectedItems)
+  // ── payment ──────────────────────────────────────────────────────────
+  // The Router for check payment products
   static const String payment = '/payment';
+  static const String address = '/address';
+
+
 }

@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Eternal Shine',
       theme: AppTheme.lightTheme,
-      initialRoute: AppRouter.splash,
+      initialRoute: AppRouter.home,
       routes: {
         AppRouter.splash: (_) => const SplashScreen(),
         AppRouter.login: (_) => const LoginPage(),

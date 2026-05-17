@@ -12,8 +12,8 @@ class DeliveryToggle extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             color: Colors.pink,
             child: const Center(
-              child: Text("Delivery", style: TextStyle(color: Colors.white)),
-            ),
+                child: Text("Delivery",
+                    style: TextStyle(color: Colors.white))),
           ),
         ),
         Expanded(
@@ -38,10 +38,9 @@ class SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+        child: Text(title,
+            style: const TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -70,17 +69,20 @@ class OrderItem extends StatelessWidget {
       child: ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: Image.asset(image, width: 50, height: 50, fit: BoxFit.cover),
+          child: Image.asset(
+            image,
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+          ),
         ),
         title: Text(title),
         subtitle: Text(subtitle),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              "\$${price.toStringAsFixed(2)}",
-              style: const TextStyle(color: Colors.pink),
-            ),
+            Text("\$${price.toStringAsFixed(2)}",
+                style: const TextStyle(color: Colors.pink)),
             Text("x$qty"),
           ],
         ),
@@ -104,7 +106,10 @@ class PaymentDetailsDynamic extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text(t), Text(v)],
+          children: [
+            Text(t),
+            Text(v),
+          ],
         ),
       );
     }

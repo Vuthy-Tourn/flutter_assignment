@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-
 class SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback? onSeeAll;
-  final String actionLabel;
+  final Icon actionLabel;
 
   const SectionHeader({
     super.key,
     required this.title,
     this.onSeeAll,
-    this.actionLabel = 'See all',
+    this.actionLabel = const Icon(Icons.chevron_right),
   });
 
   @override
@@ -25,13 +23,7 @@ class SectionHeader extends StatelessWidget {
           if (onSeeAll != null)
             GestureDetector(
               onTap: onSeeAll,
-              child: Text(
-                actionLabel,
-                style: tt.bodyMedium?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              child: actionLabel,
             ),
         ],
       ),

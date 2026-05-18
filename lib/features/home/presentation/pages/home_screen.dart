@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_product_detail_app/features/home/presentation/pages/notification_screen.dart';
+import 'package:flutter_product_detail_app/features/inbox/presentation/pages/inbox_page.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/router/app_router.dart';
+import 'package:flutter_product_detail_app/features/ui_search/search_page.dart';
+
 import '../../../../data/models/product_model.dart';
+import '../../../../data/constants/promotion_constants.dart';
+import '../../../cart/presentation/page/cart.dart';
+import '../../../profile/presentation/pages/profile_page.dart';
 import '../widgets/home_category_grid.dart';
 import '../widgets/section_header.dart';
 import '../widgets/horizontal_product_list.dart';
 import '../widgets/brand_chip.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hero_carousel.dart';
+import '../widgets/promotion_poster_card.dart';
+import '../../../order_page/presentation/pages/order_page.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,38 +32,38 @@ class _HomeScreenState extends State<HomeScreen> {
   List<ProductModel> get _recommended =>
       sampleProducts.where((p) => p.suitableFor.contains(_skinType)).toList();
 
-  void _onNavTap(int index) {
-    setState(() => _navIndex = index);
-
-    switch (index) {
-      case 0: // Home — already here
-        break;
-      case 1: // Cart — not ready yet
-      // Navigator.pushNamed(context, AppRouter.cart);
-        break;
-      case 2: // Order — not ready yet
-      // Navigator.pushNamed(context, AppRouter.order);
-        break;
-      case 3: // Inbox — not ready yet
-      // Navigator.pushNamed(context, AppRouter.inbox);
-        break;
-      case 4: // Profile — not ready yet
-      // Navigator.pushNamed(context, AppRouter.profile);
-        break;
-    }
-  }
+  void _onNavTap(int index) => setState(() => _navIndex = index);
 
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      extendBody: true,
+      body: IndexedStack(
+        index: _navIndex,
+        children: [
+          _buildHomePage(tt),
+          const CartScreen(),
+          const OrderPage(),
+          const InboxScreen(),
+          const ProfilePage(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _navIndex,
+        onTap: _onNavTap,
+      ),
+    );
+  }
+
+  Widget _buildHomePage(TextTheme tt) {
     final double systemBottom = MediaQuery.of(context).viewPadding.bottom;
     final double scrollBottomPadding = 72.0 + systemBottom + 12.0;
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      extendBody: true,
-
-      // ── AppBar ───────────────────────────────────────────────────────────
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -64,81 +73,60 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Image.asset(
           'assets/images/app_logo.png',
           height: 34,
-          errorBuilder: (context, error, stackTrace) => Text(
+          errorBuilder: (_, _, _) => Text(
             'GlowUp',
             style: tt.titleLarge?.copyWith(color: AppColors.primary),
           ),
         ),
         actions: [
+          NotificationIconButton(count: 4),
           IconButton(
-            icon: const Icon(Icons.notifications_none_outlined),
-            color: AppColors.secondary,
-            onPressed: () => Navigator.pushNamed(context, AppRouter.inbox),
-          ),
-          IconButton(
-            icon: const Icon(Icons.search_outlined),
-            color: AppColors.secondary,
-            onPressed: () => Navigator.pushNamed(context, AppRouter.cart),
-          ),
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchScreen(),
+                ),
+              );
+            },
+          )
         ],
       ),
-
-      // ── Bottom nav ───────────────────────────────────────────────────────
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _navIndex,
-        cartCount: 0,
-        onTap: _onNavTap, // 👈 wired up
-      ),
-
-      // ── Body ─────────────────────────────────────────────────────────────
       body: SingleChildScrollView(
         padding: EdgeInsets.only(bottom: scrollBottomPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Hero carousel ──────────────────────────────────────────────
             const HeroCarousel(height: 200),
-
-            // ── Category grid ──────────────────────────────────────────────
             const HomeCategoryGrid(),
 
-            // ── Current Promotion ──────────────────────────────────────────
-            SectionHeader(
-              title: 'Current Promotion',
-              onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
-            ),
-            HorizontalProductList(products: sampleProducts, listHeight: 320),
+            // ── Current Promotion ──────────────────────────────────────
+            SectionHeader(title: 'Current Promotion'),
+            _buildPromotionGrid(),
 
-            // ── Best Deal ──────────────────────────────────────────────────
-            SectionHeader(
-              title: 'Best Deal',
-              onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
-            ),
+            // ── Best Deal ──────────────────────────────────────────────
+            SectionHeader(title: 'Best Deal', onSeeAll: () {}),
             HorizontalProductList(
               products: sampleProducts,
               offset: 2,
               listHeight: 320,
             ),
 
-            // ── Trending Now ───────────────────────────────────────────────
-            SectionHeader(
-              title: 'Trending Now',
-              onSeeAll: () => Navigator.pushNamed(context, AppRouter.search),
-            ),
+            SectionHeader(title: 'Trending Now', onSeeAll: () {}),
             _recommended.isEmpty
                 ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'No trending products for your skin type.',
-                style: tt.bodyMedium,
-              ),
-            )
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'No trending products for your skin type.',
+                      style: tt.bodyMedium,
+                    ),
+                  )
                 : HorizontalProductList(
-              products: _recommended,
-              listHeight: 320,
-            ),
+                    products: _recommended,
+                    listHeight: 320,
+                  ),
 
-            // ── Popular Brand ──────────────────────────────────────────────
             SectionHeader(title: 'Popular Brand'),
             BrandMarquee(images: brandList, speed: 55),
 
@@ -148,4 +136,38 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  // Column of Rows — takes exactly the content height, no phantom gap
+  Widget _buildPromotionGrid() {
+    const double gap = 8.0;
+    final promos = samplePromotions;
+    final List<Widget> rows = [];
+
+    for (int i = 0; i < promos.length; i += 2) {
+      rows.add(
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: PromotionPosterCard(promotion: promos[i])),
+            const SizedBox(width: gap),
+            Expanded(
+              child: i + 1 < promos.length
+                  ? PromotionPosterCard(promotion: promos[i + 1])
+                  : const SizedBox(),
+            ),
+          ],
+        ),
+      );
+      if (i + 2 < promos.length) rows.add(const SizedBox(height: gap));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(mainAxisSize: MainAxisSize.min, children: rows),
+    );
+  }
 }
+
+
+
+

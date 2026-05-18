@@ -1,13 +1,5 @@
-// lib/core/router/app_router.dart
-//
-// One constant per destination.
-// Dynamic pages (CategoryPage, ProductDetailPage) share a single route and
-// receive their data via Navigator arguments — not via separate route strings.
-//
-// Pattern:
-//   Navigator.pushNamed(context, AppRouter.category, arguments: 'Skincare')
-//   Navigator.pushNamed(context, AppRouter.productDetail, arguments: product)
 
+// lib/core/router/app_router.dart
 class AppRouter {
   AppRouter._();
 
@@ -28,7 +20,11 @@ class AppRouter {
   static const String order = '/order';
 
   // ── Category ──────────────────────────────────────────────────────────
-  // ONE route for all categories. Pass the display name as arguments:
-  //   Navigator.pushNamed(context, AppRouter.category, arguments: 'Skincare')
   static const String category = '/category';
+  // ── payment ──────────────────────────────────────────────────────────
+  // The Router for check payment products
+  static const String payment = '/payment';
+  static const String address = '/address';
+
+
 }
